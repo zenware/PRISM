@@ -2,7 +2,5 @@
 
 function someTestFunction()
 {
-	echo 'Text function executed';
+    echo 'Text function executed';
 }
-
-?>
