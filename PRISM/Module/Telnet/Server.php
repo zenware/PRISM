@@ -5,13 +5,16 @@
  * @subpackage Telnet
 */
 
-require_once(ROOTPATH . '/modules/prism_telnet_screen.php');
+namespace PRISM\Module\Telnet;
+use PRISM\Module\Telnet\Screen;
+
+//require_once(ROOTPATH . '/modules/prism_telnet_screen.php');
 
 /**
  * The TelnetServer class does all connection handling and terminal negotiations and input handling.
  * Any telnet input is then passed to the registered callback function.
 */
-class Server extends \PRISM\Module\Telnet\Screen;
+class Server extends Screen;
 {
     private $socket			= null;
     private $ip				= '';

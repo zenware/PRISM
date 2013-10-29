@@ -5,6 +5,8 @@
  * @subpackage Telnet
 */
 
+namespace PRISM\Module\Telnet;
+
 // Screen object options
 define('TS_OPT_ISSELECTABLE', 1);
 define('TS_OPT_ISSELECTED', 2);
