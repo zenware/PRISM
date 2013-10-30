@@ -5,33 +5,6 @@
 *
 */
 
-/* Defines */
-// PRISM
-
-define('PRISM_DEBUG_CORE',    1);        // Shows Debug Messages From the Core
-define('PRISM_DEBUG_SOCKETS', 2);        // Shows Debug Messages From the Sockets Module
-define('PRISM_DEBUG_MODULES', 4);        // Shows Debug Messages From the all Modules
-define('PRISM_DEBUG_PLUGINS', 8);        // Shows Debug Messages From the Plugins
-define('PRISM_DEBUG_ALL',    15);        // Shows Debug Messages From All
-
-define('MAINTENANCE_INTERVAL', 2);       // The frequency in seconds to do connection maintenance checks.
-
-// Return Codes:
-define('PLUGIN_CONTINUE', 0);            // Plugin passes through operation. Whatever called it continues.
-define('PLUGIN_HANDLED',  1);            // Plugin halts continued operation. Plugins following in the plugins.ini won't be called.
-define('PLUGIN_STOP',     2);            // Plugin stops timer from triggering again in the future.
-
-define('RAND_ASCII', 1);
-define('RAND_ALPHA', 2);
-define('RAND_NUMERIC', 4);
-define('RAND_HEX', 8);
-define('RAND_BINARY', 16);
-
-error_reporting(E_ALL);
-ini_set('display_errors',		'true');
-
-define('ROOTPATH', dirname(realpath(__FILE__)));
-
 // the REQUIRED modules for PRISM.
 /*
 require_once(ROOTPATH . '/modules/prism_functions.php');
@@ -46,10 +19,15 @@ require_once(ROOTPATH . '/modules/prism_timers.php');
 require_once(ROOTPATH . '/modules/prism_plugins.php');
 */
 
-
-$PRISM = new PRISM();
-$PRISM->initialise($argc, $argv);
-$PRISM->start();
+namespace PRISM;
+use PRISM\Module\Config as ConfigHandler;
+use PRISM\Module\Hosts as HostHandler;
+use PRISM\Module\HTTP as HttpHandler;
+use PRISM\Module\Telnet as Telnet;
+use PRISM\Module\PluginHandler;
+use PRISM\Module\StateHandler;
+use PRISM\Module\AdminHandler;
+use PRISM\Module\Timers;
 
 /**
  * PHPInSimMod
@@ -66,22 +44,22 @@ class PRISM
     const ROOTPATH = ROOTPATH;
 
     /* Run Time Arrays */
-    public $config                = null;
-    public $hosts                = null;
-    public $http                = null;
-    public $telnet                = null;
-    public $plugins                = null;
-    public $admins                = null;
+    public $config  = null;
+    public $hosts   = null;
+    public $http    = null;
+    public $telnet  = null;
+    public $plugins = null;
+    public $admins  = null;
 
     // Time outs
-    private $_sleep                = null;
-    private $_uSleep                = null;
+    private $_sleep  = null;
+    private $_uSleep = null;
 
-    private $_nextMaintenance    = 0;
-    public $isWindows            = false;
+    private $_nextMaintenance = 0;
+    public $isWindows         = false;
 
     // Main while loop will run as long as this is set to true.
-    private $_isRunning            = false;
+    private $_isRunning = false;
 
     // Real Magic Functions
     public function __construct()
@@ -96,18 +74,30 @@ class PRISM
         }
 
         // there are functional paradigms that allow awesomeness.
-        $this->config    = new ConfigHandler();
-        $this->hosts    = new HostHandler();
-        $this->plugins    = new PluginHandler();
-        $this->http        = new HttpHandler();
-        $this->telnet    = new TelnetHandler();
-        $this->admins    = new AdminHandler();
+        $this->config  = new ConfigHandler();        // Previously ConfigHandler
+        $this->hosts   = new HostHandler();         // Previously HostHandler
+        $this->plugins = new PluginHandler(); //
+        $this->http    = new HttpHandler();          // Previously HttpHandler
+        $this->telnet  = new Telnet();
+        $this->admins  = new AdminHandler();
     }
 
     // Pseudo Magic Functions
-    private static function _autoload($className)
+    function _autoload($className)
     {
-        include_once ROOTPATH . "/modules/prism_" . strtolower($className) . ".php";
+        $className = ltrim($className, '\\');
+        $fileName  = '';
+        $namespace = '';
+
+        if ($lastNsPos = strrpos($className, '\\')) {
+            $namespace = substr($className, 0, $lastNsPos);
+            $className = substr($className, $lastNsPos + 1);
+            $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        }
+
+        $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+
+        require $fileName;
     }
 
     public static function _errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
@@ -143,14 +133,19 @@ class PRISM
 
         $trace = debug_backtrace();
         foreach ($trace as $index => $call) {
-            if ($call['function'] == 'main') break;
+            if ($call['function'] == 'main') {
+                break;
+            }
+
             if ($index > 0 AND isset($call['file']) AND isset($call['line'])) {
-                PRISM::console("\t".$index.' :: '.$call['function'].' in '.$call['file'].':'.$call['line']);
+                $prism = new PRISM(); // I'm not 100% sure why this is necessary but it's, apparently out of object context.
+                $prism->console("\t".$index.' :: '.$call['function'].' in '.$call['file'].':'.$call['line']);
             }
         }
 
-        if (isset($andExit) AND $andExit == true)
+        if (isset($andExit) AND $andExit == true) {
             exit(1);
+        }
 
         // Don't execute PHP internal error handler
         // Why not?
@@ -161,9 +156,9 @@ class PRISM
     public function init($argc, $argv)
     {
         // Set the timezone
-        if (isset($this->config->cvars['defaultTimeZone']))
+        if (isset($this->config->cvars['defaultTimeZone'])) {
             date_default_timezone_set($this->config->cvars['defaultTimeZone']);
-        else {
+        } else {
             // I know, I'm using error suppression, but I swear it's appropriate!
             // Why?
             $timeZoneGuess = @date_default_timezone_get();
@@ -177,19 +172,20 @@ class PRISM
             OR !$this->http->init() OR !$this->telnet->init()
             OR !$this->admins->init() OR !$this->plugins->init()
         ) {
-            PRISM::console'Fatal error encountered. Exiting...');
+            $this->console('Fatal error encountered. Exiting...');
             exit(1);
         }
 
         $pluginsLoaded = $this->plugins->loadPlugins();
 
         if ($this->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
-            if ($pluginsLoaded == 0)
-                PRISM::console'No Plugins Loaded');
-            else if ($pluginsLoaded == 1)
-                PRISM::console'One Plugin Loaded');
-            else
-                PRISM::console"{$pluginsLoaded} Plugins Loaded.");
+            if ($pluginsLoaded == 0) {
+                $this->console('No Plugins Loaded');
+            } else if ($pluginsLoaded == 1) {
+                $this->console('One Plugin Loaded');
+            } else {
+                $this->console("{$pluginsLoaded} Plugins Loaded.");
+            }
         }
     }
 
@@ -248,32 +244,32 @@ class PRISM
                     // Process the command (the first char or word of the line)
                     switch ($exp[0]) {
                     case 'c':
-                        PRISM::console(sprintf('%32s - %64s', 'COMMAND', 'DESCRIPTOIN'));
+                        $this->console(sprintf('%32s - %64s', 'COMMAND', 'DESCRIPTOIN'));
                         foreach ($this->plugins->getPlugins() as $plugin => $details) {
                             foreach ($details->sayCommands as $command => $detail) {
-                                PRISM::console(sprintf('%32s - %64s', $command, $detail['info']));
+                                $this->console(sprintf('%32s - %64s', $command, $detail['info']));
                             }
                         }
 
                         break;
                     case 'h':
-                        PRISM::console(sprintf('%14s %28s:%-5s %8s %22s', 'Host ID', 'IP', 'PORT', 'UDPPORT', 'STATUS'));
+                        $this->console(sprintf('%14s %28s:%-5s %8s %22s', 'Host ID', 'IP', 'PORT', 'UDPPORT', 'STATUS'));
                         foreach ($this->hosts->getHostsInfo() as $host) {
                             $status = (($host['connStatus'] == CONN_CONNECTED) ? '' : (($host['connStatus'] == CONN_VERIFIED) ? 'VERIFIED &' : ' NOT')).' CONNECTED';
                             $socketType = (($host['socketType'] == SOCKTYPE_TCP) ? 'tcp://' : 'udp://');
-                            PRISM::console(sprintf('%14s %28s:%-5s %8s %22s', $host['id'], $socketType.$host['ip'], $host['port'], $host['udpPort'], $status));
+                            $this->console(sprintf('%14s %28s:%-5s %8s %22s', $host['id'], $socketType.$host['ip'], $host['port'], $host['udpPort'], $status));
                         }
                         break;
 
                     case 'I':
-                        PRISM::console'RE-INITIALISING PRISM...');
+                        $this->console('RE-INITIALISING PRISM...');
                         $this->initialise(null, null);
                         break;
 
                     case 'p':
-                        PRISM::console(sprintf('%28s %8s %24s %64s', 'NAME', 'VERSION', 'AUTHOR', 'DESCRIPTION'));
+                        $this->console(sprintf('%28s %8s %24s %64s', 'NAME', 'VERSION', 'AUTHOR', 'DESCRIPTION'));
                         foreach ($this->plugins->getPlugins() as $plugin => $details) {
-                            PRISM::console(sprintf("%28s %8s %24s %64s", $plugin::NAME, $plugin::VERSION, $plugin::AUTHOR, $plugin::DESCRIPTION));
+                            $this->console(sprintf("%28s %8s %24s %64s", $plugin::NAME, $plugin::VERSION, $plugin::AUTHOR, $plugin::DESCRIPTION));
                         }
                         break;
 
@@ -282,22 +278,22 @@ class PRISM
                         break;
 
                     case 'w':
-                        PRISM::console(sprintf('%15s:%5s %5s', 'IP', 'PORT', 'LAST ACTIVITY'));
+                        $this->console(sprintf('%15s:%5s %5s', 'IP', 'PORT', 'LAST ACTIVITY'));
                         foreach ($this->http->getHttpInfo() as $v) {
                             $lastAct = time() - $v['lastActivity'];
-                            PRISM::console(sprintf('%15s:%5s %13d', $v['ip'], $v['port'], $lastAct));
+                            $this->console(sprintf('%15s:%5s %13d', $v['ip'], $v['port'], $lastAct));
                         }
-                        PRISM::console'Counted '.$this->http->getHttpNumClients().' http client'.(($this->http->getHttpNumClients() == 1) ? '' : 's'));
+                        $this->console('Counted '.$this->http->getHttpNumClients().' http client'.(($this->http->getHttpNumClients() == 1) ? '' : 's'));
                         break;
 
                     default :
-                        PRISM::console'Available Commands:');
-                        PRISM::console'    h - show host info');
-                        PRISM::console'    I - re-initialise PRISM (reload ini files / reconnect to hosts / reset http socket');
-                        PRISM::console'    p - show plugin info');
-                        PRISM::console'    x - exit PRISM');
-                        PRISM::console'    w - show www connections');
-                        PRISM::console'    c - show command list');
+                        $this->console('Available Commands:');
+                        $this->console('    h - show host info');
+                        $this->console('    I - re-initialise PRISM (reload ini files / reconnect to hosts / reset http socket');
+                        $this->console('    p - show plugin info');
+                        $this->console('    x - exit PRISM');
+                        $this->console('    w - show www connections');
+                        $this->console('    c - show command list');
                     }
                 }
 
@@ -349,25 +345,25 @@ class PRISM
     public function __destruct()
     {
         // What makes this shutdown particularly safe?
-        PRISM::console('Safe shutdown: ' . date($this->config->cvars['logFormat']));
+        $this->console('Safe shutdown: ' . date($this->config->cvars['logFormat']));
     }
 
     public function console($line, $EOL = true)
     {
         // Add log to file
-        // Effected by PRISM_LOG_MODE && PRISM_LOG_FILE_MODE
+        // Affected by PRISM_LOG_MODE && PRISM_LOG_FILE_MODE
         echo $line . (($EOL) ? PHP_EOL : '');
     }
 
-    public function get_dir_structure($path, $recursive = TRUE, $ext = NULL)
+    public function get_dir_structure($path, $recursive = true, $ext = null)
     {
-        $return = NULL;
+        $return = null;
         if (!is_dir($path)) {
             trigger_error('$path is not a directory!', E_USER_WARNING);
-            return FALSE;
+            return false;
         }
         if ($handle = opendir($path)) {
-            while (FALSE !== ($item = readdir($handle))) {
+            while (false !== ($item = readdir($handle))) {
                 if ($item != '.' && $item != '..') {
                     if (is_dir($path . $item)) {
                         if ($recursive) {
@@ -376,7 +372,7 @@ class PRISM
                             $return[$item] = array();
                         }
                     } else {
-                        if ($ext != null && strrpos($item, $ext) !== FALSE) {
+                        if ($ext != null && strrpos($item, $ext) !== false) {
                             $return[] = $item;
                         }
                     }
@@ -394,10 +390,13 @@ class PRISM
         $p2 = explode('/', $path2);
 
         foreach ($p1 as $index => $part) {
-            if ($part === '')
+            if ($part === '') {
                 continue;
-            if (!isset($p2[$index]) || $part != $p2[$index])
+            }
+
+            if (!isset($p2[$index]) || $part != $p2[$index]) {
                 return false;
+            }
         }
 
         return true;
@@ -408,7 +407,7 @@ class PRISM
         $phpLocation = '';
 
         if ($windows) {
-            PRISM::console('Trying to find the location of php.exe');
+            $this->console('Trying to find the location of php.exe');
 
             // Search in current dir first.
             $exp = explode("\r\n", shell_exec('dir /s /b php.exe'));
@@ -428,10 +427,12 @@ class PRISM
         } else {
             $exp = explode(' ', shell_exec('whereis php'));
             $count = count($exp);
-            if ($count == 1)                // Some *nix's output is only the path
+
+            if ($count == 1) {           // Some *nix's output is only the path
                 $phpLocation = $exp[0];
-            else if ($count > 1)            // FreeBSD for example has more info on the line, like :
-                $phpLocation = $exp[1];     // php: /user/local/bin/php /usr/local/man/man1/php.1.gz
+            } else if ($count > 1) {     // FreeBSD for example has more info on the line, like :
+                $phpLocation = $exp[1];  // php: /user/local/bin/php /usr/local/man/man1/php.1.gz
+            }
         }
 
         return $phpLocation;
@@ -441,20 +442,22 @@ class PRISM
     {
         // Validate script
         $fileContents = file_get_contents($file);
-        if (!eval('return true;'.preg_replace(array('/^<\?(php)?/', '/\?>$/'), '', $fileContents)))
+
+        if (!eval('return true;'.preg_replace(array('/^<\?(php)?/', '/\?>$/'), '', $fileContents))) {
             return array(false, array('Errors parsing '.$file));
+        }
 
         // Validate any require_once or include_once files.
-    //  $matches = array();
-    //  preg_match_all('/(include_once|require_once)\s*\(["\']+(.*)["\']+\)/', $fileContents, $matches);
-    //
-    //  foreach ($matches[2] as $include)
-    //  {
-    //      PRISM::console($include);
-    //      $result = validatePHPFile($include);
-    //      if ($result[0] == false)
-    //          return $result;
-    //  }
+        //  $matches = array();
+        //  preg_match_all('/(include_once|require_once)\s*\(["\']+(.*)["\']+\)/', $fileContents, $matches);
+        //
+        //  foreach ($matches[2] as $include)
+        //  {
+        //      $this->console($include);
+        //      $result = validatePHPFile($include);
+        //      if ($result[0] == false)
+        //          return $result;
+        //  }
 
         return array(true, array());
     }
@@ -462,8 +465,9 @@ class PRISM
     public function flagsToInteger($flagsString = '')
     {
         # We don't have anything to parse.
-        if ($flagsString == '')
-            return FALSE;
+        if ($flagsString == '') {
+            return false;
+        }
 
         $flagsBitwise = 0;
         for ($chrPointer = 0, $strLen = strlen($flagsString); $chrPointer < $strLen; ++$chrPointer) {
@@ -471,12 +475,14 @@ class PRISM
             $char = ord($flagsString{$chrPointer});
 
             # We only want a (ASCII = 97) through z (ASCII 122), nothing else.
-            if ($char < 97 || $char > 122)
+            if ($char < 97 || $char > 122) {
                 continue;
+            }
 
             # Check we have already set that flag, if so skip it!
-            if ($flagsBitwise & (1 << ($char - 97)))
+            if ($flagsBitwise & (1 << ($char - 97))) {
                 continue;
+            }
 
             # Add the value to our $flagBitwise intager.
             $flagsBitwise += (1 << ($char - 97));
@@ -487,15 +493,17 @@ class PRISM
     public function flagsToString($flagsBitwise = 0)
     {
         $flagsString = '';
-        if ($flagsBitwise == 0)
+        if ($flagsBitwise == 0) {
             return $flagsString;
+        }
 
         # This makes sure we only handle the flags we know by unsetting any unknown bits.
         $flagsBitwise = $flagsBitwise & ADMIN_ALL;
 
         # Converts bits to the char forms.
-        for ($i = 0; $i < 26; ++$i)
-            $flagsString .= ($flagsBitwise & (1 << $i)) ? chr($i + 97) : NULL;
+        for ($i = 0; $i < 26; ++$i) {
+            $flagsString .= ($flagsBitwise & (1 << $i)) ? chr($i + 97) : null;
+        }
 
         return $flagsString;
     }

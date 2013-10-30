@@ -6,8 +6,8 @@
 */
 
 //require_once(ROOTPATH . '/modules/prism_geometry.php');
-use PRISM\Module\Geometry as Geometry;
 namespace PRISM\Module;
+use PRISM\Module\Geometry as Geometry; // This needs to be fixed.
 
 // PaTH
 class PTH

@@ -5,11 +5,10 @@
  * @subpackage Config
 */
 
-require_once(ROOTPATH . '/modules/prism_sectionhandler.php');
-
 namespace PRISM\Module;
+use PRISM\Module\SectionHandler;
 
-class Config extends SectionHandler
+class Config extends SectionHandler //use as ConfigHandler
 {
     public $cvars	= array
         (
@@ -32,7 +31,7 @@ class Config extends SectionHandler
         $this->iniFile = 'cvars.ini';
     }
 
-    public function initialise()
+    public function init()
     {
         global $PRISM;
 

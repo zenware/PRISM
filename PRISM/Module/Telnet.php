@@ -5,203 +5,108 @@
  * @subpackage Telnet
 */
 
+/*
 require_once(ROOTPATH . '/modules/prism_telnet_defines.php');
 require_once(ROOTPATH . '/modules/prism_telnet_server.php');
 require_once(ROOTPATH . '/modules/prism_telnet_admins.php');
 require_once(ROOTPATH . '/modules/prism_telnet_hosts.php');
 require_once(ROOTPATH . '/modules/prism_telnet_plugins.php');
+*/
+
+namespace PRISM\Module;
+use PRISM\Module\Telnet\Server as TelnetServer;
+use PRISM\Module\Telnet\Admins;
+use PRISM\Module\Telnet\PluginSection as TSPluginSection;
+//use PRISM\Module\Telnet\Hosts;
 
 define('TELNET_NOT_LOGGED_IN', 0);
 define('TELNET_ASKED_USERNAME', 1);
 define('TELNET_ASKED_PASSWORD', 2);
 define('TELNET_LOGGED_IN', 3);
-
-class TelnetHandler extends SectionHandler
-{
-    private $telnetSock		= null;
-    private $clients		= array();
-    private $numClients		= 0;
-
-    private $telnetVars		= array();
-
-    public function __construct()
-    {
-        $this->iniFile = 'telnet.ini';
-    }
-
-    public function __destruct()
-    {
-        $this->close(true);
-    }
-
-    public function init()
-    {
-        global $PRISM;
-
-        $this->telnetVars = array
-        (
-            'ip' => '',
-            'port' => 0,
-        );
-
-        if ($this->loadIniFile($this->telnetVars, false)) {
-            if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
-                console('Loaded '.$this->iniFile);
-            }
-        } else {
-            # We ask the client to manually input the connection details here.
-            require_once(ROOTPATH . '/modules/prism_interactive.php');
-            Interactive::queryTelnet($this->telnetVars);
-
-            # Then build a telnet.ini file based on these details provided.
-            $extraInfo = <<<ININOTES
-;
-; Telnet listen details (for remote console access).
-; 0.0.0.0 (default) will bind the socket to all available network interfaces.
-; To limit the bind to one interface only, you can enter its IP address here.
-; If you do not want to use the telnet feature, you can comment or remove the
-; lines, or enter "" and 0 for the ip and port.
-;
-
-ININOTES;
-            if ($this->createIniFile('Telnet Configuration (remote console)', array('telnet' => &$this->telnetVars), $extraInfo)) {
-                console('Generated config/'.$this->iniFile);
-            }
-        }
-
-        // Setup telnet socket to listen on
-        if (!$this->setupListenSocket()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function setupListenSocket()
-    {
-        $this->close(false);
-
-        if ($this->telnetVars['ip'] != '' && $this->telnetVars['port'] > 0) {
-            $this->telnetSock = @stream_socket_server('tcp://'.$this->telnetVars['ip'].':'.$this->telnetVars['port'], $errNo, $errStr);
-
-            if (!is_resource($this->telnetSock) || $this->telnetSock === FALSE || $errNo) {
-                console('Error opening telnet socket : '.$errStr.' ('.$errNo.')');
-                return false;
-            } else {
-                console('Listening for telnet input on '.$this->telnetVars['ip'].':'.$this->telnetVars['port']);
-            }
-        }
-
-        return true;
-    }
-
-    private function close($all)
-    {
-        if (is_resource($this->telnetSock)) {
-            fclose($this->telnetSock);
-        }
-
-        if (!$all) {
-            return;
-        }
-
-        for ($k=0; $k<$this->numClients; $k++) {
-            array_splice($this->clients, $k, 1);
-            $k--;
-            $this->numClients--;
-        }
-    }
-
-    public function getSelectableSockets(array &$sockReads, array &$sockWrites)
-    {
-        // Add http sockets to sockReads
-        if (is_resource($this->telnetSock)) {
-            $sockReads[] = $this->telnetSock;
-        }
-
-        for ($k=0; $k<$this->numClients; $k++) {
-            if (is_resource($this->clients[$k]->getSocket())) {
-                $sockReads[] = $this->clients[$k]->getSocket();
-
-                // If write buffer was full, we must check to see when we can write again
-                if ($this->clients[$k]->getSendQLen() > 0) {
-                    $sockWrites[] = $this->clients[$k]->getSocket();
-                }
-            }
-        }
-    }
-
-    public function checkTraffic(array &$sockReads, array &$sockWrites)
-    {
-        $activity = 0;
-
-        // telnetSock input (incoming telnet connection)
-        if (in_array($this->telnetSock, $sockReads)) {
-            $activity++;
-
-            // Accept the new connection
-            $peerInfo = '';
-            $sock = @stream_socket_accept ($this->telnetSock, null, $peerInfo);
-
-            if (is_resource($sock)) {
-                //stream_set_blocking ($sock, 0);
-
-                // Add new connection to clients array
-                $exp = explode(':', $peerInfo);
-                $this->clients[] = new PrismTelnet($sock, $exp[0], $exp[1]);
-                $this->numClients++;
-                console('Telnet Client '.$exp[0].':'.$exp[1].' connected.');
-            }
-            unset ($sock);
-        }
-
-        // telnet clients input
-        for ($k=0; $k<$this->numClients; $k++) {
-            // Recover from a full write buffer?
-            if ($this->clients[$k]->getSendQLen() > 0 && in_array($this->clients[$k]->getSocket(), $sockWrites)) {
-                $activity++;
-
-                // Flush the sendQ (bit by bit, not all at once - that could block the whole app)
-                if ($this->clients[$k]->getSendQLen() > 0) {
-                    $this->clients[$k]->flushSendQ();
-                }
-            }
-
-            // Did we receive something from a httpClient?
-            if (!in_array($this->clients[$k]->getSocket(), $sockReads)) {
-                continue;
-            }
-
-            $activity++;
-
-            $data = $this->clients[$k]->read($data);
-
-            // Did the client hang up?
-            if ($data == '') {
-                console('Closed telnet client (client initiated) '.$this->clients[$k]->getRemoteIP().':'.$this->clients[$k]->getRemotePort());
-                array_splice ($this->clients, $k, 1);
-                $k--;
-                $this->numClients--;
-                continue;
-            }
-
-            $this->clients[$k]->addInputToBuffer($data);
-            $this->clients[$k]->processInput();
-
-            if ($this->clients[$k]->getMustClose()) {
-                $this->clients[$k]->__destruct();
-                console('Closed telnet client (client ctrl-c) '.$this->clients[$k]->getRemoteIP().':'.$this->clients[$k]->getRemotePort());
-                array_splice ($this->clients, $k, 1);
-                $k--;
-                $this->numClients--;
-            }
-        }
-
-        return $activity;
-    }
-}
-
 define('TS_SECTION_MAIN', 1);
+
+// Standard control keys
+define('KEY_IP',                    chr(0x03));         // Interrupt Process (break)
+define('KEY_BS',                    chr(0x08));         // backspace
+define('KEY_TAB',                   chr(0x09));         // TAB
+define('KEY_SHIFTTAB',              chr(0x01).chr(9));  // SHIFT-TAB
+define('KEY_ENTER',                 chr(0x0A));         // Enter
+define('KEY_ESCAPE',                chr(0x1B));         // escape
+define('KEY_DELETE',                chr(0x7F));         // del
+
+// Self defined key codes
+define('KEY_CURLEFT',               chr(0x01).chr(0));      // Cursor LEFT
+define('KEY_CURRIGHT',              chr(0x01).chr(1));      // Cursor LEFT
+define('KEY_CURUP',                 chr(0x01).chr(2));      // Cursor LEFT
+define('KEY_CURDOWN',               chr(0x01).chr(3));      // Cursor LEFT
+define('KEY_HOME',                  chr(0x01).chr(4));      // Home
+define('KEY_END',                   chr(0x01).chr(5));      // End
+define('KEY_PAGEUP',                chr(0x01).chr(6));      // Home
+define('KEY_PAGEDOWN',              chr(0x01).chr(7));      // End
+define('KEY_INSERT',                chr(0x01).chr(8));      // Insert
+
+define('KEY_CURLEFT_CTRL',          chr(0x02).chr(0));      // Cursor LEFT with ctrl
+define('KEY_CURRIGHT_CTRL',         chr(0x02).chr(1));      // Cursor LEFT with ctrl
+define('KEY_CURUP_CTRL',            chr(0x02).chr(2));      // Cursor LEFT with ctrl
+define('KEY_CURDOWN_CTRL',          chr(0x02).chr(3));      // Cursor LEFT with ctrl
+
+define('KEY_F1',                    chr(0x01).chr(11));     // F1
+define('KEY_F2',                    chr(0x01).chr(12));     // F2
+define('KEY_F3',                    chr(0x01).chr(13));     // F3
+define('KEY_F4',                    chr(0x01).chr(14));     // F4
+define('KEY_F5',                    chr(0x01).chr(15));     // F5
+define('KEY_F6',                    chr(0x01).chr(17));     // F6
+define('KEY_F7',                    chr(0x01).chr(18));     // F7
+define('KEY_F8',                    chr(0x01).chr(19));     // F8
+define('KEY_F9',                    chr(0x01).chr(20));     // F9
+define('KEY_F10',                   chr(0x01).chr(21));     // F10
+define('KEY_F11',                   chr(0x01).chr(23));     // F11
+define('KEY_F12',                   chr(0x01).chr(24));     // F12
+
+// ANSI escape sequences VT100
+define('VT100_USG0',                KEY_ESCAPE.'(B');
+define('VT100_USG1',                KEY_ESCAPE.')B');
+define('VT100_USG0_LINE',           KEY_ESCAPE.'(0');
+define('VT100_USG1_LINE',           KEY_ESCAPE.')0');
+define('VT100_G0_ALTROM',           KEY_ESCAPE.'(1');
+define('VT100_G1_ALTROM',           KEY_ESCAPE.')1');
+define('VT100_G0_ALTROM_GFX',       KEY_ESCAPE.'(2');
+define('VT100_G1_ALTROM_GFX',       KEY_ESCAPE.')2');
+
+define('VT100_SSHIFT2',             KEY_ESCAPE.'N');
+define('VT100_SSHIFT3',             KEY_ESCAPE.'O');
+
+define('VT100_ED2',                 KEY_ESCAPE.'[2J');      // Clear entire screen
+
+define('VT100_CURSORHOME',          KEY_ESCAPE.'[H');       // Move cursor to upper-left corner
+
+define('VT100_STYLE_RESET',         KEY_ESCAPE.'[0m');      // Attribs off
+define('VT100_STYLE_BOLD',          KEY_ESCAPE.'[1m');      // bold
+define('VT100_STYLE_LOWINTENS',     KEY_ESCAPE.'[2m');      // low intensity
+define('VT100_STYLE_UNDERLINE',     KEY_ESCAPE.'[4m');      // underline
+define('VT100_STYLE_BLINK',         KEY_ESCAPE.'[5m');      // blink
+define('VT100_STYLE_REVERSE',       KEY_ESCAPE.'[7m');      // reverse video
+define('VT100_STYLE_INVISIBLE',     KEY_ESCAPE.'[8m');      // invisible text
+
+define('VT100_STYLE_BLACK',         KEY_ESCAPE.'[30m');
+define('VT100_STYLE_RED',           KEY_ESCAPE.'[31m');
+define('VT100_STYLE_GREEN',         KEY_ESCAPE.'[32m');
+define('VT100_STYLE_YELLOW',        KEY_ESCAPE.'[33m');
+define('VT100_STYLE_BLUE',          KEY_ESCAPE.'[34m');
+define('VT100_STYLE_MAGENTA',       KEY_ESCAPE.'[35m');
+define('VT100_STYLE_CYAN',          KEY_ESCAPE.'[36m');
+define('VT100_STYLE_WHITE',         KEY_ESCAPE.'[37m');
+
+define('VT100_STYLE_BG_BLACK',      KEY_ESCAPE.'[40m');
+define('VT100_STYLE_BG_RED',        KEY_ESCAPE.'[41m');
+define('VT100_STYLE_BG_GREEN',      KEY_ESCAPE.'[42m');
+define('VT100_STYLE_BG_YELLOW',     KEY_ESCAPE.'[43m');
+define('VT100_STYLE_BG_BLUE',       KEY_ESCAPE.'[44m');
+define('VT100_STYLE_BG_MAGENTA',    KEY_ESCAPE.'[45m');
+define('VT100_STYLE_BG_CYAN',       KEY_ESCAPE.'[46m');
+define('VT100_STYLE_BG_WHITE',      KEY_ESCAPE.'[47m');
+
+define('TELNET_CURSOR_HIDE', 1);
 
 /**
  * The PrismTelnet class handles :
@@ -209,7 +114,7 @@ define('TS_SECTION_MAIN', 1);
  * -all the information coming from the telnet client (KB input / commands)
  * -what will be drawn on the telnet client's screen
 */
-class PrismTelnet extends TelnetServer
+class Telnet extends TelnetServer
 {
     // If filled in, the user is logged in (or half-way logging in).
     private $username		= '';
@@ -533,61 +438,5 @@ class PrismTelnet extends TelnetServer
         }
 
         $this->redraw();
-    }
-}
-
-class MenuBar extends ScreenContainer
-{
-    public function __construct($ttype)
-    {
-        $this->setSize(80, 1);
-        $this->setId('mainMenu');
-        $this->setTType($ttype);
-
-        $textArea = new TSTextArea(3, 1, 6, 1);
-        $textArea->setId('admins');
-        $textArea->setOptions(TS_OPT_ISSELECTABLE | TS_OPT_ISSELECTED);
-        $textArea->setText(VT100_STYLE_BOLD.'A'.VT100_STYLE_RESET.'dmins');
-        $this->add($textArea);
-
-        $textArea = new TSTextArea(16, 0, 5, 1);
-        $textArea->setId('hosts');
-        $textArea->setOptions(TS_OPT_ISSELECTABLE);
-        $textArea->setText(VT100_STYLE_BOLD.'H'.VT100_STYLE_RESET.'osts');
-        $this->add($textArea);
-
-        $textArea = new TSTextArea(26, 0, 7, 1);
-        $textArea->setId('plugins');
-        $textArea->setOptions(TS_OPT_ISSELECTABLE);
-        $textArea->setText(VT100_STYLE_BOLD.'P'.VT100_STYLE_RESET.'lugins');
-        $this->add($textArea);
-
-        $l = strlen('Prism v'.PHPInSimMod::VERSION);
-        $textArea = new TSTextArea(80 - ($l + 1), 0, $l, 1);
-        $textArea->setId('prismVersion');
-        $textArea->setText(VT100_STYLE_GREEN.VT100_STYLE_BOLD.'Prism v'.PHPInSimMod::VERSION.VT100_STYLE_RESET);
-        $this->add($textArea);
-
-        $line = new TSHLine(2, 2, $this->getWidth() - 2);
-        $line->setTType($this->getTType());
-        $this->add($line);
-    }
-
-    public function selectSection($section)
-    {
-        $a = 0;
-
-        while ($object = $this->getObjectByIndex($a)) {
-            if ($object->getId() == $section) {
-                if (($object->getOptions() & TS_OPT_ISSELECTED) == 0)
-                    $object->toggleSelected();
-            } else {
-                if (($object->getOptions() & TS_OPT_ISSELECTED) > 0) {
-                    $object->toggleSelected();
-                }
-            }
-
-            $a++;
-        }
     }
 }

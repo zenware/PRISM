@@ -1,6 +1,9 @@
 <?php
 
 namespace PRISM\Module\Telnet;
+use PRISM\Module\Telnet\Screen\Container as ScreenContainer;
+use PRISM\Module\Telnet\Screen\TextArea as TSTextArea;
+use PRISM\Module\Telnet\Screen\HLine as TSHLine;
 
 class MenuBar extends ScreenContainer
 {
@@ -45,8 +48,9 @@ class MenuBar extends ScreenContainer
 
         while ($object = $this->getObjectByIndex($a)) {
             if ($object->getId() == $section) {
-                if (($object->getOptions() & TS_OPT_ISSELECTED) == 0)
+                if (($object->getOptions() & TS_OPT_ISSELECTED) == 0) {
                     $object->toggleSelected();
+                }
             } else {
                 if (($object->getOptions() & TS_OPT_ISSELECTED) > 0) {
                     $object->toggleSelected();

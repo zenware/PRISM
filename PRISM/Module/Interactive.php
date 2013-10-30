@@ -224,6 +224,7 @@ class Interactive
         if (self::query('Do you want to restrict access to the admin website with a http login query?', array('yes', 'no')) == 'yes') {
             $vars['httpAuthPath'] = '/';
         }
+
         echo PHP_EOL;
     }
 
@@ -243,25 +244,29 @@ class Interactive
         // Ask which IP address to bind the listen socket to
         while (true) {
             $vars['ip']		= self::query('On which IP address should we listen? (blank means all)', array(), true);
-            if ($vars['ip'] == '')
+            if ($vars['ip'] == '') {
                 $vars['ip'] = '0.0.0.0';
+            }
 
-            if (!verifyIP($vars['ip']))
+            if (!verifyIP($vars['ip'])) {
                 echo 'Invalid IPv4 address entered. Please try again.'.PHP_EOL;
-            else
+            } else {
                 break;
+            }
         }
 
         // Ask which Port to listen on
         while (true) {
             $vars['port']	= (int) self::query('On which Port should we listen? (blank means Port 23', array(), true);
-            if ($vars['port'] == '')
+            if ($vars['port'] == '') {
                 $vars['port'] = '23';
+            }
 
-            if ($vars['port'] < 1 || $vars['port'] > 65535)
+            if ($vars['port'] < 1 || $vars['port'] > 65535) {
                 echo 'Invalid Port number entered. Please try again.'.PHP_EOL;
-            else
+            } else {
                 break;
+            }
         }
         echo PHP_EOL;
     }

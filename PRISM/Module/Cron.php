@@ -26,8 +26,9 @@ class Cron
         Config::GetMyConfig();
 
         try {
-            if (FALSE === file_exists($this->crontab))
+            if (FALSE === file_exists($this->crontab)) {
                 $this->writeTemplate($this->crontab);
+            }
 
             $this->loadTable($this->crontab);
 #			Timers::Add('Cron', new Timer(1, -1, -1, array($this, 'tick')));
@@ -41,15 +42,17 @@ class Cron
     {
         $time = time();
 
-        if (abs($time - $this->time) > 10)
+        if (abs($time - $this->time) > 10) {
             $this->time = $time - 1;
+        }
 
         while ($this->time < $time) {
             $now = date('siHdmw', ++$this->time);
 
             foreach ($this->jobs as $job) {
-                if (FALSE === (bool) preg_match('/'.$job['regex'].'/', $now))
+                if (FALSE === (bool) preg_match('/'.$job['regex'].'/', $now)){
                     continue;
+                }
 
                 switch ($job['cmd']{0}) {
                     case '/':
@@ -71,17 +74,20 @@ class Cron
 
     protected function loadTable($file)
     {
-        if (FALSE === file_exists($file) || FALSE === is_file($file) ||  FALSE === ($file_contents = file_get_contents($file)))
+        if (FALSE === file_exists($file) || FALSE === is_file($file) ||  FALSE === ($file_contents = file_get_contents($file))) {
             throw new Exception('<Cron> cannot not load crontab "'.$file.'"');
+        }
 
         foreach (preg_split('/\r?\n/', $file_contents, -1, PREG_SPLIT_NO_EMPTY) as $line) {
-            if ($line{0} === '#')
+            if ($line{0} === '#') {
                 continue;
+            }
 
             list($seconds, $minutes, $hours, $mday, $month, $day, $command) = preg_split('/\s+/', $line, 7, PREG_SPLIT_NO_EMPTY);
 
-            if ($seconds == '' || $minutes == '' || $hours == '' || $mday == '' || $month == '' || $day == '' || $command == '')
+            if ($seconds == '' || $minutes == '' || $hours == '' || $mday == '' || $month == '' || $day == '' || $command == '') {
                 continue;
+            }
 
             $this->jobs[] = array (
                 'regex'	=> $this->format($seconds, 59) . $this->format($minutes, 59) . $this->format($hours, 23) . $this->format($mday, 31) . $this->format($month, 12) . $this->format($day, 6, 1),

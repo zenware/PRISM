@@ -2,14 +2,15 @@
 /**
  * Plugin.php - Extended by all PRISM plugins.
  *
- * @category Superclass
- * @package PRISM
+ * @category   Superclass
+ * @package    PRISM
  * @subpackage Plugin
- * @author zenware (Jay Looney) <jay.m.looney@gmail.com>
+ * @author     zenware (Jay Looney) <jay.m.looney@gmail.com>
  * @license    http://opensource.org/licenses/MIT MIT License
  */
 
 namespace PRISM\Plugin;
+use PRISM\Module\Timers;
 
 /**
  * PRISM - Plugin

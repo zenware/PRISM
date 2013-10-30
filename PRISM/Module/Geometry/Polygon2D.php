@@ -2,7 +2,7 @@
 
 namespace PRISM\Module\Geometry;
 
-class Polygon2D
+class Polygon2D extends Geometry
 {
     public $points    = array();
     public $numPoints = 0;

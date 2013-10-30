@@ -7,7 +7,7 @@ namespace PRISM\Module\Telnet\Screen;
  * ScreenObject is the base class for all screen components
  * (ScreenContainer, TextLine, TextArea, etc)
 */
-abstract class Object
+abstract class Object // use as ScreenObject
 {
     abstract public function draw();
 

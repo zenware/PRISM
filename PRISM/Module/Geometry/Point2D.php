@@ -2,7 +2,7 @@
 
 namespace PRISM\Module\Geometry;
 
-class Point2D
+class Point2D extends Geometry
 {
     public $x = 0;
     public $y = 0;

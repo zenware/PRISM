@@ -1,6 +1,7 @@
 <?php
 /**
  * PRISM - Plugin Handler Module
+ * Heyoh~ this is going to need some hardcore fixing
  *
  * @category   Module
  * @package    PRISM
@@ -11,10 +12,13 @@
  * @link       https://github.com/zenware/PRISM/blob/devel/Plugin/prism_plugins.php
  */
 
-define('PRINT_CHAT',        (1 << 0));        // 1
-define('PRINT_RCM',            (1 << 1));        // 2
-define('PRINT_NUM',            (1 << 2)-1);    // 4 - 1
-define('PRINT_CONTEXT',        PRINT_NUM);        // 3
+namespace PRISM\Module;
+use PRISM\Module\SectionHandler;
+
+define('PRINT_CHAT',    (1 << 0));        // 1
+define('PRINT_RCM',     (1 << 1));        // 2
+define('PRINT_NUM',     (1 << 2)-1);    // 4 - 1
+define('PRINT_CONTEXT', PRINT_NUM);        // 3
 
 /**
  * PRISM - Plugin Handler Module
@@ -28,8 +32,8 @@ define('PRINT_CONTEXT',        PRINT_NUM);        // 3
  */
 class PluginHandler extends SectionHandler
 {
-    private $plugins            = array();            // Stores references to the plugins we've spawned.
-    private $pluginvars            = array();
+    private $plugins    = array();            // Stores references to the plugins we've spawned.
+    private $pluginvars = array();
 
     public function __construct()
     {
@@ -64,6 +68,7 @@ class PluginHandler extends SectionHandler
             }
         } else {
             // We ask the client to manually input the plugin details here.
+            // What the fuck is this.
             include_once ROOTPATH . '/modules/prism_interactive.php';
             Interactive::queryPlugins($this->pluginvars, $PRISM->hosts->getHostsInfo());
 

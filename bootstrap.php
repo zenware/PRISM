@@ -37,6 +37,6 @@ ini_set('display_errors',		'true');
 
 define('ROOTPATH', dirname(realpath(__FILE__)));
 
-$PRISM = new PRISM();
+$PRISM = new PRISM\PRISM();
 $PRISM->init($argc, $argv);
 $PRISM->start();

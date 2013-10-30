@@ -1,7 +1,17 @@
 <?php
 
 namespace PRISM\Module\Telnet;
+use PRISM\Module\SectionHandler;
 
+/**
+ * Handles telnet client connections.
+ * 
+ * @category   Submodule
+ * @package    PRISM
+ * @subpackage Module\Telnet
+ * @author     unknown
+ * @license    http://opensource.org/license/MIT MIT License
+ */
 class Handler extends SectionHandler // TelnetHandler
 {
     private $telnetSock		= null;
