@@ -1,6 +1,6 @@
 <?php
 
-namespace PRISM\Module\Telnet\Screen\Container;
+namespace PRISM\Module\Telnet\Screen;
 use PRISM\Module\Telnet\Screen\Object as ScreenObject;
 
 /**

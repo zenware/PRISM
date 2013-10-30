@@ -1,11 +1,17 @@
 <?php
 /**
- * PHPInSimMod - Telnet Module
- * @package PRISM
+ * PRISM/PRISM/Module/Telnet/Screen/HostSection.php
+ * This is a split up and namespaced portion of the Telnet submodule.
+ * 
+ * @category   Submodule
+ * @package    PRISM
  * @subpackage Telnet
 */
 
-class TSHostSection extends TSSection
+namespace PRISM\Module\Telnet\Screen;
+use PRISM\Module\Telnet\Screen\Section as TSSection;
+
+class HostSection extends TSSection // TSHostSection
 {
     public function __construct(ScreenContainer $parentSection, $width, $height, $ttype = 0)
     {

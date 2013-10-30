@@ -2,25 +2,22 @@
 
 namespace PRISM\Module\Telnet\Screen;
 
-define('TS_BORDER_NONE',		0);
-define('TS_BORDER_REGULAR',		1);
-define('TS_BORDER_DOUBLE',		2);
-define('TS_BORDER_NUMTYPES',	3);
 
-define('TC_BORDER_TOPLEFT',		0);
-define('TC_BORDER_TOPRIGHT',	1);
-define('TC_BORDER_BOTTOMLEFT',	2);
-define('TC_BORDER_BOTTOMRIGHT',	3);
-define('TC_BORDER_HORILINE',	4);
-define('TC_BORDER_VERTLINE',	5);
+
+define('TC_BORDER_TOPLEFT',     0);
+define('TC_BORDER_TOPRIGHT',    1);
+define('TC_BORDER_BOTTOMLEFT',  2);
+define('TC_BORDER_BOTTOMRIGHT', 3);
+define('TC_BORDER_HORILINE',    4);
+define('TC_BORDER_VERTLINE',    5);
 
 class BorderHelper // Use as ScreenBorderHelper
 {
-    private $ttype		= 0;
+    private $ttype        = 0;
 
     public function __construct($ttype)
     {
-        $this->ttype	= $ttype;
+        $this->ttype    = $ttype;
     }
 
     public function start()

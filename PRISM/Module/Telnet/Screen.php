@@ -6,7 +6,7 @@
 */
 
 namespace PRISM\Module\Telnet;
-use PRISM\Module\Telnet\Server\TextArea as TSTextArea;
+use PRISM\Module\Telnet\Screen\TextArea as TSTextArea;
 use PRISM\Module\Telnet\Screen\Container as ScreenContainer;
 
 // Screen object options

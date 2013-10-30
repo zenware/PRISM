@@ -59,15 +59,17 @@ class LVS extends Plugins
 
     public function onTrackInfo(IS_STA $STA)
     {
-        if ($this->Track == $STA->Track)
+        if ($this->Track == $STA->Track) {
             return;
+        }
 
         $this->Track = $STA->Track; # Update Track Short Code
 
         $path = ROOTPATH . $this::PATH . $this->Track . '.pth';
 
-        if (!file_exists($path))
+        if (!file_exists($path)) {
             return $this->pth = null; # We don't have a PTH file for this track.
+        }
 
         $this->pth = new pth($path);
 
@@ -80,13 +82,15 @@ class LVS extends Plugins
     {
         $trackType = substr($this->Track, -1);
 
-        if ($trackType == 'X' OR $trackType == 'Y')
+        if ($trackType == 'X' OR $trackType == 'Y') {
             return; # Not a open layout where we need to check for custom pth files.
+        }
 
         $path = ROOTPATH . $this::PATH . $AXI->LName . '.pth';
 
-        if (!file_exists($path))
+        if (!file_exists($path)) {
             return $this->pth = null; # We don't have a PTH file for this track.
+        }
 
         $this->pth = new pth($path);
 
@@ -115,11 +119,13 @@ class LVS extends Plugins
 
     public function onVerification(IS_HLV $HLV)
     {
-        if (!isset($this->lapValidation[$HLV->PLID]))
+        if (!isset($this->lapValidation[$HLV->PLID])) {
             return PLUGIN_CONTINUE; # In the case where the player that caused the HLV has already also left.
+        }
 
-        if ($this->lapValidation[$HLV->PLID][$this->onLap[$HLV->PLID]] === false)
+        if ($this->lapValidation[$HLV->PLID][$this->onLap[$HLV->PLID]] === false) {
             return PLUGIN_CONTINUE;	# It's already an invalid lap, we don't report it twice.
+        }
 
         $cl = $this->getClientByPLID($HLV->PLID);
         Msg2Lfs()->Msg("{$cl->PName}'s Lap is ^1invalid^9!")->Send();
@@ -129,8 +135,9 @@ class LVS extends Plugins
 
     public function isValid($PLID, $LAP = null)
     {
-        if ($LAP === null)
+        if ($LAP === null) {
             $LAP = $this->onLap[$PLID];
+        }
 
         return $this->lapValidation[$PLID][$LAP];
     }
@@ -140,26 +147,31 @@ class LVS extends Plugins
         if (!$this->pth) { return PLUGIN_CONTINUE; }
 
         foreach ($MCI->Info as $CompCar) {
-            if (!isset($this->lapValidation[$CompCar->PLID]))
-                continue; # In the case where the player has already left.
+            if (!isset($this->lapValidation[$CompCar->PLID])) {
+                continue; // In the case where the player has already left.
+            }
 
             $isRoad = $this->pth->isOnRoad($CompCar->X, $CompCar->Y, $CompCar->Node);
 
-            if (!isset($this->onRoad[$CompCar->PLID]))
+            if (!isset($this->onRoad[$CompCar->PLID])) {
                 $this->onRoad[$CompCar->PLID] = null;
+            }
 
-            if ($this->onRoad[$CompCar->PLID] == $isRoad)
-                continue; # They already know.
+            if ($this->onRoad[$CompCar->PLID] == $isRoad) {
+                continue; // They already know.
+            }
 
-            if ($isRoad === false)
+            if ($isRoad === false) {
                 Msg2Lfs()->PLID($CompCar->PLID)->Text('You are ^1off^9 the track!')->Send();
-            else
+            } else {
                 Msg2Lfs()->PLID($CompCar->PLID)->Text('You are ^2on^9 the track!')->Send();
+            }
 
             $this->onRoad[$CompCar->PLID] = $isRoad;
 
-            if ($isRoad === false OR $this->lapValidation[$CompCar->PLID][$this->onLap[$CompCar->PLID]] === FALSE)
-                continue;	# It's already an invalid lap, we don't report it twice.
+            if ($isRoad === false OR $this->lapValidation[$CompCar->PLID][$this->onLap[$CompCar->PLID]] === FALSE) {
+                continue; // It's already an invalid lap, we don't report it twice.
+            }
 
             Msg2Lfs()->Msg("{$this->getClientByPLID($CompCar->PLID)->PName}'s Lap is ^1invalid^9!")->Send();
 
@@ -173,10 +185,11 @@ class LVS extends Plugins
 
         $plid = (isset($argv[1])) ? $argv[1] : $this->getClientByUCID($ucid)->PLID;
 
-        if ($this->isValid($plid, $argv[2]))
+        if ($this->isValid($plid, $argv[2])) {
             Msg2Lfs()->UCID($ucid)->Text('Lap is valid.')->Send();
-        else
+        } else {
             Msg2Lfs()->UCID($ucid)->Text('Lap is not valid.')->Send();
+        }
 
         return PLUGIN_HANDLED;
     }
@@ -191,4 +204,3 @@ class LVS extends Plugins
             Msg2Lfs()->UCID($ucid)->Text("{$PLID} : {$cl->UCID} - {$cl->UName} - {$cl->PName}")->Send();
         }
     }
-}

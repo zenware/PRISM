@@ -7,3 +7,4 @@ configs/telnet.ini
 logs/*
 Thumbs.db
 Desktop.ini
+/vendor/

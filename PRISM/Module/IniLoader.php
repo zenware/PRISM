@@ -9,7 +9,7 @@ namespace PRISM\Module;
 
 /**
  * protected IniLoader methods (to be extended by other classes, like the section handlers)
- * ->loadIniFile(array &$target, $parseSections = TRUE)
+ * ->loadIniFile(array &$target, $parseSections = true)
  * ->createIniFile($desc, array $options, $extraInfo = '')
  * ->rewriteLine($section, $key, $value)
  * ->appendSection($section, array &$values)
@@ -19,43 +19,45 @@ abstract class IniLoader
 {
     protected $iniFile = '';
 
-    protected function loadIniFile(array &$target, $parseSections = TRUE)
+    protected function loadIniFile(array &$target, $parseSections = true)
     {
-        $iniVARs = FALSE;
+        $iniVARs = false;
 
         // Should parse the $PrismDir/config/***.ini file, and load them into the passed $target array.
         $iniPath = ROOTPATH . '/configs/'.$this->iniFile;
 
+        $prism = new \PRISM\PRISM();
+
         if (!file_exists($iniPath)) {
-            console('Could not find ini file "'.$this->iniFile.'"');
-            return FALSE;
+            $prism->console('Could not find ini file "'.$this->iniFile.'"');
+            return false;
         }
-        if (($iniVARs = parse_ini_file($iniPath, $parseSections)) === FALSE) {
-            console('Could not parse ini file "'.$this->iniFile.'"');
-            return FALSE;
+        if (($iniVARs = parse_ini_file($iniPath, $parseSections)) === false) {
+            $prism->console('Could not parse ini file "'.$this->iniFile.'"');
+            return false;
         }
 
         // Merge iniVARs into target (array_merge didn't seem to work - maybe because target is passed by reference?)
-        foreach ($iniVARs as $k => $v)
+        foreach ($iniVARs as $k => $v) {
             $target[$k] = $v;
+        }
 
-        # At this point we're always successful
-        return TRUE;
+        // At this point we're always successful
+        return true;
     }
 
 
     protected function createIniFile($desc, array $options, $extraInfo = '')
     {
         // Check if config folder exists
-        if (!file_exists(ROOTPATH . '/configs/') &&
-            !@mkdir(ROOTPATH . '/configs/'))
-        {
-            return FALSE;
+        if (!file_exists(ROOTPATH . '/configs/') && !@mkdir(ROOTPATH . '/configs/')) {
+            return false;
         }
 
         // Check if file doesn't already exist
-        if (file_exists(ROOTPATH . '/configs/'.$this->iniFile))
-            return FALSE;
+        if (file_exists(ROOTPATH . '/configs/'.$this->iniFile)) {
+            return false;
+        }
 
         // Generate file contents
         $text = '; '.$desc.' (automatically genereated)'.PHP_EOL;
@@ -66,6 +68,7 @@ abstract class IniLoader
         foreach ($options as $section => $data) {
             if (is_array($data)) {
                 $main .= PHP_EOL.'['.$section.']'.PHP_EOL;
+
                 foreach ($data as $key => $value) {
                     $main .= $key.' = '.((is_numeric($value)) ? $value : '"'.$value.'"').PHP_EOL;
                 }
@@ -73,15 +76,15 @@ abstract class IniLoader
         }
 
         if ($main == '')
-            return FALSE;
+            return false;
 
         $text .= $main.PHP_EOL;
 
         // Write contents
         if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, $text))
-            return FALSE;
+            return false;
 
-        return TRUE;
+        return true;
     }
 
     protected function rewriteLine($section, $key, $value)

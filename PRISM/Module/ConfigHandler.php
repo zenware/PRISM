@@ -8,7 +8,7 @@
 namespace PRISM\Module;
 use PRISM\Module\SectionHandler;
 
-class Config extends SectionHandler //use as ConfigHandler
+class ConfigHandler extends SectionHandler //use as ConfigHandler
 {
     public $cvars	= array
         (
@@ -35,15 +35,17 @@ class Config extends SectionHandler //use as ConfigHandler
     {
         global $PRISM;
 
-        if ($this->loadIniFile($this->cvars, FALSE)) {
-            if ($this->cvars['debugMode'] & PRISM_DEBUG_CORE)
-                console('Loaded '.$this->iniFile);
+        if ($this->loadIniFile($this->cvars, false)) {
+            if ($this->cvars['debugMode'] & PRISM_DEBUG_CORE) {
+                $PRISM->console('Loaded '.$this->iniFile);
+            }
         } else {
-            $this->cvars['secToken'] = str_replace(array('"', '\'', ' '), '.', createRandomString(16));
+            $this->cvars['secToken'] = str_replace(array('"', '\'', ' '), '.', $PRISM->createRandomString(16));
 
-            console('Using cvars defaults.');
-            if ($this->createIniFile('PHPInSimMod Configuration Variables', array('prism' => &$this->cvars)))
-                console('Generated config/'.$this->iniFile);
+            $PRISM->console('Using cvars defaults.');
+            if ($this->createIniFile('PHPInSimMod Configuration Variables', array('prism' => &$this->cvars))) {
+                $PRISM->console('Generated config/'.$this->iniFile);
+            }
         }
 
         return true;

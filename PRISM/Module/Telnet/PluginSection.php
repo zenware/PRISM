@@ -60,6 +60,7 @@ class PluginSection extends TSSection
         }
     }
 
+    // Why does this even exist?
     private function createMenu()
     {
 //		$textArea = new TSTextArea();

@@ -117,20 +117,20 @@ define('TELNET_CURSOR_HIDE', 1);
 class Telnet extends TelnetServer
 {
     // If filled in, the user is logged in (or half-way logging in).
-    private $username		= '';
+    private $username   = '';
 
     // The state of the login process.
-    private $loginState		= 0;
+    private $loginState = 0;
 
     // Section vars
-    private $curSection		= '';		// holds the name of the currently active section
-    private $section		= null;		// holds the actual active section object itself (accounts, hosts, plugins)
+    private $curSection = '';        // holds the name of the currently active section
+    private $section    = null;        // holds the actual active section object itself (accounts, hosts, plugins)
 
-    private $menuBar		= null;		// cosmetic menu bar
+    private $menuBar = null;        // cosmetic menu bar
 
-    private $adminSection	= null;		// handles all account related stuff
-    private $hostSection	= null;		// handles all host related stuff
-    private $pluginSection	= null;		// handles all plugin related stuff
+    private $adminSection  = null;        // handles all account related stuff
+    private $hostSection   = null;        // handles all host related stuff
+    private $pluginSection = null;        // handles all plugin related stuff
 
     public function __construct(&$sock, &$ip, &$port)
     {

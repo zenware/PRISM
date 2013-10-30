@@ -11,23 +11,23 @@ abstract class Object // use as ScreenObject
 {
     abstract public function draw();
 
-    private $id				= '';
-    private $x				= 0;
-    private $y				= 0;
-    private $absolute		= false;			// Absolute position or relative to parent
-    private $cols			= 0;				// width
-    protected $realWidth	= 0;
-    private $lines			= 0;				// height
-    protected $realHeight	= 0;
+    private $id           = '';
+    private $x            = 0;
+    private $y            = 0;
+    private $absolute     = false; // Absolute position or relative to parent
+    private $cols         = 0;     // width
+    protected $realWidth  = 0;
+    private $lines        = 0;     // height
+    protected $realHeight = 0;
 
-    private $ttype			= 0;
-    private $visible		= true;
-    private $border			= TS_BORDER_NONE;	// border type
-    private $margin			= 0;				// border margin
-    private $caption		= '';
-    private $options		= 0;				// Selectable, selected, has background, editable, etc
+    private $ttype   = 0;
+    private $visible = true;
+    private $border  = TS_BORDER_NONE; // border type
+    private $margin  = 0;              // border margin
+    private $caption = '';
+    private $options = 0;              // Selectable, selected, has background, editable, etc
 
-    protected $screenCache	= '';				// object contents cache
+    protected $screenCache    = '';                // object contents cache
 
     public function setId($id)
     {
@@ -70,7 +70,7 @@ abstract class Object // use as ScreenObject
         $x = (int) $x;
         if ($x < 0)
             $x = 0;
-        $this->x		= $x;
+        $this->x        = $x;
     }
 
     public function setY($y)
@@ -78,7 +78,7 @@ abstract class Object // use as ScreenObject
         $y = (int) $y;
         if ($y < 0)
             $y = 0;
-        $this->y		= $y;
+        $this->y        = $y;
     }
 
     public function getLocation()
@@ -117,8 +117,8 @@ abstract class Object // use as ScreenObject
         $cols = (int) $cols;
         if ($cols < 0)
             $cols = 0;
-        $this->cols			= $cols;
-        $this->screenCache	= '';
+        $this->cols            = $cols;
+        $this->screenCache    = '';
     }
 
     public function setHeight($lines)
@@ -126,8 +126,8 @@ abstract class Object // use as ScreenObject
         $lines = (int) $lines;
         if ($lines < 0)
             $lines = 0;
-        $this->lines		= $lines;
-        $this->screenCache	= '';
+        $this->lines        = $lines;
+        $this->screenCache    = '';
     }
 
     public function getSize()
@@ -161,7 +161,7 @@ abstract class Object // use as ScreenObject
         if ($border < 0 || $border > TS_BORDER_NUMTYPES)
             $border = 0;
         $this->border = $border;
-        $this->screenCache	= '';
+        $this->screenCache    = '';
     }
 
     public function getBorder()
@@ -175,7 +175,7 @@ abstract class Object // use as ScreenObject
         if ($margin < 0)
             $margin = 0;
         $this->margin = $margin;
-        $this->screenCache	= '';
+        $this->screenCache    = '';
     }
 
     public function getMargin()
@@ -190,8 +190,8 @@ abstract class Object // use as ScreenObject
 
     public function setCaption($caption)
     {
-        $this->caption		= $caption;
-        $this->screenCache	= '';
+        $this->caption        = $caption;
+        $this->screenCache    = '';
     }
 
     public function setOptions($options)

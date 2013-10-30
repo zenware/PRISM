@@ -20,14 +20,30 @@ require_once(ROOTPATH . '/modules/prism_plugins.php');
 */
 
 namespace PRISM;
-use PRISM\Module\Config as ConfigHandler;
-use PRISM\Module\Hosts as HostHandler;
-use PRISM\Module\HTTP as HttpHandler;
-use PRISM\Module\Telnet as Telnet;
+use PRISM\Module\ConfigHandler;
 use PRISM\Module\PluginHandler;
 use PRISM\Module\StateHandler;
 use PRISM\Module\AdminHandler;
 use PRISM\Module\Timers;
+use PRISM\Module\HTTP as HttpHandler;
+use PRISM\Module\Hosts as HostHandler;
+use PRISM\Module\Telnet\Handler as TelnetHandler;
+
+// For some reason these defines here fixes one small error and brings a rush of others...
+/*
+define('TS_BORDER_NONE',     0);
+define('TS_BORDER_REGULAR',  1);
+define('TS_BORDER_DOUBLE',   2);
+define('TS_BORDER_NUMTYPES', 3);
+*/
+
+/*
+define('RAND_ASCII', 1);
+define('RAND_ALPHA', 2);
+define('RAND_NUMERIC', 4);
+define('RAND_HEX', 8);
+define('RAND_BINARY', 16);
+*/
 
 /**
  * PHPInSimMod
@@ -74,11 +90,11 @@ class PRISM
         }
 
         // there are functional paradigms that allow awesomeness.
-        $this->config  = new ConfigHandler();        // Previously ConfigHandler
-        $this->hosts   = new HostHandler();         // Previously HostHandler
-        $this->plugins = new PluginHandler(); //
-        $this->http    = new HttpHandler();          // Previously HttpHandler
-        $this->telnet  = new Telnet();
+        $this->config  = new ConfigHandler();
+        $this->hosts   = new HostHandler();
+        $this->plugins = new PluginHandler();
+        $this->http    = new HttpHandler();
+        $this->telnet  = new TelnetHandler();
         $this->admins  = new AdminHandler();
     }
 
@@ -506,6 +522,100 @@ class PRISM
         }
 
         return $flagsString;
+    }
+
+    public function createRandomString($len, $type = RAND_ASCII)
+    {
+        $out = '';
+
+        for ($i=0; $i<$len; $i++) {
+            switch ($type) {
+            case RAND_ALPHA:
+                $out .= rand(0, 1) ? chr(rand(65, 90)) : chr(rand(97, 122));
+                break;
+
+            case RAND_NUMERIC:
+                $out .= chr(rand(48, 57));
+                break;
+
+            case RAND_HEX:
+                $out .= sprintf('%02x', rand(0, 255));
+                break;
+
+            case RAND_BINARY:
+                $out .= chr(rand(0, 255));
+                break;
+            
+            default:
+                $out .= chr(rand(32, 127));
+                break;
+            }
+        }
+
+        return $out;
+    }
+
+    public function ucwordsByChar($string, $delimiter)
+    {
+        $out = '';
+
+        foreach (explode($delimiter, $string) as $key => $value) {
+            if ($key > 0) {
+                $out .= $delimiter;
+            }
+
+            $out .= ucfirst($value);
+        }
+
+        return $out;
+    }
+
+    public function getIP(&$ip)
+    {
+        if (verifyIP($ip)) {
+            return $ip;
+        } else {
+            $tmp_ip = @gethostbyname($ip);
+            if (verifyIP($ip)) {
+                return $ip;
+            }
+        }
+
+        return false;
+    }
+
+    public function verifyIP(&$ip)
+    {
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+    }
+
+    public function timeToString($int, $fraction=1000)
+    {
+        $seconds = floor($int / $fraction);
+        $fractions = $int - floor($seconds * $fraction);
+        $seconds -= ($hours = floor($seconds / 3600)) * 3600;
+        $seconds -= ($minutes = floor($seconds / 60)) * 60;
+
+        if ($hours > 0) {
+            return sprintf('%d:%02d:%02d.%0'.(strlen($fraction) - 1).'d', $hours, $minutes, $seconds, $fractions);
+        } else {
+            return sprintf('%d:%02d.%0'.(strlen($fraction) - 1).'d', $minutes, $seconds, $fractions);
+        }
+    }
+
+    public function timeToStr($time, $fraction=1000)
+    {
+        return preg_replace('/^(0+:)+/', '', timeToString($time, $fraction));
+    }
+
+    public function sortByKey($key)
+    {
+
+    }
+
+    public function sortByProperty($property)
+    {
+        
     }
 
 }

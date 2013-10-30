@@ -75,8 +75,8 @@ class Hosts extends SectionHandler
                 console('Loaded '.$this->iniFile);
         } else {
             # We ask the client to manually input the connection details here.
-            require_once(ROOTPATH . '/modules/prism_interactive.php');
-            Interactive::queryHosts($this->connvars);
+            //require_once(ROOTPATH . '/modules/prism_interactive.php');
+            \PRISM\Module\Interactive::queryHosts($this->connvars);
 
             # Then build a connections.ini file based on these details provided.
             if ($this->createIniFile('InSim Connection Hosts', $this->connvars))

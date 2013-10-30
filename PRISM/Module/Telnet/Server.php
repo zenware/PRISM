@@ -122,7 +122,7 @@ define('TELNET_ECHO_NOTHING', 3);
  * The TelnetServer class does all connection handling and terminal negotiations and input handling.
  * Any telnet input is then passed to the registered callback function.
 */
-class Server extends TelnetScreen;
+class Server extends TelnetScreen
 {
     private $socket			= null;
     private $ip				= '';
