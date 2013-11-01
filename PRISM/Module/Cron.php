@@ -26,7 +26,7 @@ class Cron
         Config::GetMyConfig();
 
         try {
-            if (FALSE === file_exists($this->crontab)) {
+            if (false === file_exists($this->crontab)) {
                 $this->writeTemplate($this->crontab);
             }
 
@@ -50,7 +50,7 @@ class Cron
             $now = date('siHdmw', ++$this->time);
 
             foreach ($this->jobs as $job) {
-                if (FALSE === (bool) preg_match('/'.$job['regex'].'/', $now)){
+                if (false === (bool) preg_match('/'.$job['regex'].'/', $now)){
                     continue;
                 }
 
@@ -74,7 +74,7 @@ class Cron
 
     protected function loadTable($file)
     {
-        if (FALSE === file_exists($file) || FALSE === is_file($file) ||  FALSE === ($file_contents = file_get_contents($file))) {
+        if (false === file_exists($file) || false === is_file($file) ||  false === ($file_contents = file_get_contents($file))) {
             throw new Exception('<Cron> cannot not load crontab "'.$file.'"');
         }
 

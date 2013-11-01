@@ -10,6 +10,19 @@ namespace PRISM\Module;
 use PRISM\Module\Geometry as Geometry; // This needs to be fixed.
 
 // PaTH
+/**
+ * This holds the path data and does stuff with it.
+ * 
+ * There's really no reason for this not to be called Path now...
+ * Especially since we can use PRISM\Module\Path as PTH;
+ * At least until someone bothers to convert the rest of it for cleanliness.
+ * 
+ * @package PRISM
+ * @subpackage Module\PTH
+ * @author PRISM Team
+ * @license MIT License
+ * @link LFSForum
+ */
 class PTH
 {
     const PACK = 'a6CCll';
@@ -24,22 +37,44 @@ class PTH
     public $polyRoad = array();
     public $polyLimit = array();
 
+    /**
+     * Constructs the PTH class
+     * 
+     * @param string $pthFilePath The Directory path to the game Path Data.
+     * 
+     * @return PTH
+     */
     public function __construct($pthFilePath)
     {
         $file = file_get_contents($pthFilePath);
 
         if ($this->unPack($file) === true) {
-            return; # trigger_error returns (bool) TRUE, so if the return is true, there was an error.
+            return; // trigger_error returns (bool) true, so if the return is true, there was an error.
         }
 
         return $this;
     }
+
+    /**
+     * Destroys this class
+     * With.. array splicing?
+     * 
+     * @return none
+     */
     public function __destruct()
     {
         array_splice($this->Nodes, 0, $this->NumNodes);
         array_splice($this->polyRoad, 0, $this->NumNodes);
         array_splice($this->polyLimit, 0, $this->NumNodes);
     }
+
+    /**
+     * Unpacks Path data from a given file
+     * 
+     * @param string $file File to unpack
+     * 
+     * @return mixed
+     */
     public function unPack($file)
     {
         if (substr($file, 0, 6) != $this->LFSPTH) {
@@ -67,6 +102,15 @@ class PTH
 
         return $this;
     }
+
+    /**
+     * Converts nodePolys and limitRoad to Poly
+     * 
+     * @param array   &$nodePolys Node Poly's
+     * @param unknown $limitRoad  I don't know
+     * 
+     * @return ?
+     */
     public function toPoly(array &$nodePolys, $limitRoad)
     {
         array_splice($nodePolys, 0, count($nodePolys));
@@ -151,7 +195,7 @@ class PTH
         $RightCos = cos (-90 * M_PI / 180);
         $RightSin = sin (-90 * M_PI / 180);
 
-        $Node = end($p->Nodes); # Get's last node.
+        $Node = end($p->Nodes); // Get's last node.
         $llx2 = ($Node->Direction->X * $LeftCos - (-$Node->Direction->Y) * $LeftSin) * $Node->Limit->Left + ($Node->Center->X + 1024);
         $lly2 = ((-$Node->Direction->Y) * $LeftCos + $Node->Direction->X * $LeftSin) * $Node->Limit->Left + ((-$Node->Center->Y) + 1024);
         $lrx2 = ($Node->Direction->X * $RightCos - (-$Node->Direction->Y) * $RightSin) * -$Node->Limit->Right + ($Node->Center->X + 1024);
@@ -165,7 +209,7 @@ class PTH
         $limit_col = imagecolorallocatealpha($im, 8, 128, 16, 64);
         $drive_col = imagecolorallocatealpha($im, 64, 64, 64, 64);
 
-        reset($p->Nodes);	# Resets our pointer back to the start.
+        reset($p->Nodes);	// Resets our pointer back to the start.
 
         foreach ($p->Nodes as $i => $Node) {
             // Limit

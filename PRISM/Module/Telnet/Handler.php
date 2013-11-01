@@ -80,7 +80,7 @@ ININOTES;
         if ($this->telnetVars['ip'] != '' && $this->telnetVars['port'] > 0) {
             $this->telnetSock = @stream_socket_server('tcp://'.$this->telnetVars['ip'].':'.$this->telnetVars['port'], $errNo, $errStr);
 
-            if (!is_resource($this->telnetSock) || $this->telnetSock === FALSE || $errNo) {
+            if (!is_resource($this->telnetSock) || $this->telnetSock === false || $errNo) {
                 console('Error opening telnet socket : '.$errStr.' ('.$errNo.')');
                 return false;
             } else {

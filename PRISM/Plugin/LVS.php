@@ -35,13 +35,13 @@ class LVS extends Plugins
     const VERSION = PRISM::VERSION;
     const DESCRIPTION = 'Lap Verification System.';
 
-    const PATH = '/data/pth/';
+    const PATH = '/data/pth/'; // Not sure about this since...
 
-    private $pth = null;
-    private $lapValidation = array();
-    private $onLap = array();
-    private $onRoad = array();
-    private $Track = null;
+    private $_pth = null;
+    private $_lapValidation = array();
+    private $_onLap = array();
+    private $_onRoad = array();
+    private $_Track = null;
 
     public function __construct()
     {
@@ -169,7 +169,7 @@ class LVS extends Plugins
 
             $this->onRoad[$CompCar->PLID] = $isRoad;
 
-            if ($isRoad === false OR $this->lapValidation[$CompCar->PLID][$this->onLap[$CompCar->PLID]] === FALSE) {
+            if ($isRoad === false OR $this->lapValidation[$CompCar->PLID][$this->onLap[$CompCar->PLID]] === false) {
                 continue; // It's already an invalid lap, we don't report it twice.
             }
 
@@ -198,9 +198,9 @@ class LVS extends Plugins
     {
         ksort($this->onLap);
 
-        forEach ($this->onLap as $PLID => $LAP)
-        {
+        foreach ($this->onLap as $PLID => $LAP) {
             $cl = $this->getClientByPLID($PLID);
             Msg2Lfs()->UCID($ucid)->Text("{$PLID} : {$cl->UCID} - {$cl->UName} - {$cl->PName}")->Send();
         }
     }
+}

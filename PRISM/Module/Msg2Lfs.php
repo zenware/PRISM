@@ -13,7 +13,9 @@
 namespace PRISM\Module;
 
 /**
- * Msg2Lfs()
+ * Sends packets to LFS
+ * 
+ * I should really get to work on fixing this.
  * 
  * @category   Module
  * @package    PRISM

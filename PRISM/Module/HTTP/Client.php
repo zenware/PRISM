@@ -71,7 +71,7 @@ class Client // HttpClient
         return $this->lastActivity;
     }
 
-    public function write($data, $sendQPacket = FALSE)
+    public function write($data, $sendQPacket = false)
     {
         $bytes = 0;
         $dataLen = strlen($data);
@@ -81,7 +81,7 @@ class Client // HttpClient
         if (!is_resource($this->socket))
             return $bytes;
 
-        if ($sendQPacket == TRUE) {
+        if ($sendQPacket == true) {
             // This packet came from the sendQ. We just try to send this and don't bother too much about error checking.
             // That's done from the sendQ flushing code.
             $bytes = @fwrite($this->socket, $data);
@@ -118,7 +118,7 @@ class Client // HttpClient
     public function flushSendQ()
     {
         // Send chunk of data
-        $bytes = $this->write(substr($this->sendQ, 0, $this->sendWindow), TRUE);
+        $bytes = $this->write(substr($this->sendQ, 0, $this->sendWindow), true);
 
         // Dynamic window sizing
         if ($bytes == $this->sendWindow)

@@ -47,12 +47,16 @@ define('RAND_BINARY', 16);
 
 /**
  * PHPInSimMod
- * @package PRISM
- * @author Dygear (Mark Tomlin) <Dygear@gmail.com>
- * @author ripnet (Tom Young) <ripnet@gmail.com>
- * @author morpha (Constantin Köpplinger) <morpha@xigmo.net>
- * @author Victor (Victor van Vlaardingen) <vic@lfs.net>
- * @author GeForz (Kai Lochbaum)
+ * 
+ * @category Application
+ * @package  PRISM
+ * @author   Dygear (Mark Tomlin) <Dygear@gmail.com>
+ * @author   ripnet (Tom Young) <ripnet@gmail.com>
+ * @author   morpha (Constantin Köpplinger) <morpha@xigmo.net>
+ * @author   Victor (Victor van Vlaardingen) <vic@lfs.net>
+ * @author   GeForz (Kai Lochbaum)
+ * @license  http://opensource.org/licenses/MIT MIT License
+ * @link     http://lfsforum.net/forumdisplay.php?f=312
 */
 class PRISM
 {
@@ -78,6 +82,13 @@ class PRISM
     private $_isRunning = false;
 
     // Real Magic Functions
+    /**
+     * Constructs the PRISM Class
+     * 
+     * Instantiates a bunch of other required classes, and checks if the OS is Windows.
+     * If the OS is windows, some function behavior is changed because it would otherwise
+     * not function at all... Damn windows.
+     */
     public function __construct()
     {
         // This reregisters our autoload magic function into the class.
@@ -99,6 +110,13 @@ class PRISM
     }
 
     // Pseudo Magic Functions
+    /**
+     * PSR0 Standard Autoloader for PRISM Classes
+     * 
+     * @param string $className The class to search for Autoloading.
+     * 
+     * @return none
+     */
     function _autoload($className)
     {
         $className = ltrim($className, '\\');
@@ -116,6 +134,23 @@ class PRISM
         require $fileName;
     }
 
+    /**
+     * Handles errors within PRISM
+     * 
+     * I'm not even sure why this is necessary at all actually
+     * It seems like it could be better handled by PHP itself.
+     * 
+     * Also later on it's probably a good idea to remove the underscore
+     * Underscore should be reserved for magic and private funtions/vars.
+     * 
+     * @param int    $errno      Error Number
+     * @param string $errstr     Error String
+     * @param string $errfile    Which file the error is in.
+     * @param int    $errline    What line the error is on.
+     * @param unsure $errcontext Ironically enough, unnecessary in this context.
+     * 
+     * @return mixed
+     */
     public static function _errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
         // This error code is not included in error_reporting
@@ -124,25 +159,29 @@ class PRISM
         }
 
         switch ($errno) {
-            case E_ERROR:
-            case E_USER_ERROR:
-                    echo 'PHP ERROR:'.PHP_EOL;
-                    $andExit = true;
-                break;
-            case E_WARNING:
-            case E_USER_WARNING:
-                    echo 'PHP WARNING:'.PHP_EOL;
-                break;
-            case E_NOTICE:
-            case E_USER_NOTICE:
-                    echo 'PHP NOTICE:'.PHP_EOL;
-                break;
-            case E_STRICT:
-                    echo 'PHP STRICT:'.PHP_EOL;
-                break;
-            default:
-                    echo 'UNKNOWN:'.PHP_EOL;
-                break;
+        case E_ERROR:
+        case E_USER_ERROR:
+                echo 'PHP ERROR:'.PHP_EOL;
+                $andExit = true;
+            break;
+
+        case E_WARNING:
+        case E_USER_WARNING:
+                echo 'PHP WARNING:'.PHP_EOL;
+            break;
+
+        case E_NOTICE:
+        case E_USER_NOTICE:
+                echo 'PHP NOTICE:'.PHP_EOL;
+            break;
+
+        case E_STRICT:
+                echo 'PHP STRICT:'.PHP_EOL;
+            break;
+
+        default:
+                echo 'UNKNOWN:'.PHP_EOL;
+            break;
         }
 
         echo "\t$errstr in $errfile on line $errline".PHP_EOL; // Side Effect :O
@@ -169,6 +208,21 @@ class PRISM
         return true;
     }
 
+    /**
+     * Finishes initializing the PRISM class.
+     * 
+     * Changes the flow of the application based on user configured settings.
+     * 
+     * I never was 100% sure why we needed to have both an initializer and a constructor.
+     * Thinking about it now, perhaps the fact that the with them separate you can instantiate
+     * the class much faster than if you combined them and this class contains a collection
+     * of functions used in miscellaneous spots. It /would/ be a significant overhead.
+     * 
+     * @param int    $argc A count of how many arguments are passed.
+     * @param string $argv A vector containing the arguments.
+     * 
+     * @return none
+     */
     public function init($argc, $argv)
     {
         // Set the timezone
@@ -205,17 +259,33 @@ class PRISM
         }
     }
 
+    /**
+     * ...Starts PRISM
+     * 
+     * Now we're getting redundant, a constructor, an initializer, and a starter.
+     * What in heavans name is going on.
+     * 
+     * @return none
+     */
     public function start()
     {
-        if ($this->_isRunning)
+        if ($this->_isRunning) {
             return;
+        }
 
         $this->_isRunning = true;
-        $this->_nextMaintenance = time () + MAINTENANCE_INTERVAL;
+        $this->_nextMaintenance = time() + MAINTENANCE_INTERVAL;
 
         $this->_main();
     }
 
+    /**
+     * Main Imperative/Procedural Style Program Loop.
+     * 
+     * Hopefully this is fast as its the most important to optimize.
+     * 
+     * @return none
+     */
     private function _main()
     {
         while ($this->_isRunning === true) {
@@ -261,6 +331,7 @@ class PRISM
                     switch ($exp[0]) {
                     case 'c':
                         $this->console(sprintf('%32s - %64s', 'COMMAND', 'DESCRIPTOIN'));
+
                         foreach ($this->plugins->getPlugins() as $plugin => $details) {
                             foreach ($details->sayCommands as $command => $detail) {
                                 $this->console(sprintf('%32s - %64s', $command, $detail['info']));
@@ -270,6 +341,7 @@ class PRISM
                         break;
                     case 'h':
                         $this->console(sprintf('%14s %28s:%-5s %8s %22s', 'Host ID', 'IP', 'PORT', 'UDPPORT', 'STATUS'));
+
                         foreach ($this->hosts->getHostsInfo() as $host) {
                             $status = (($host['connStatus'] == CONN_CONNECTED) ? '' : (($host['connStatus'] == CONN_VERIFIED) ? 'VERIFIED &' : ' NOT')).' CONNECTED';
                             $socketType = (($host['socketType'] == SOCKTYPE_TCP) ? 'tcp://' : 'udp://');
@@ -279,11 +351,12 @@ class PRISM
 
                     case 'I':
                         $this->console('RE-INITIALISING PRISM...');
-                        $this->initialise(null, null);
+                        $this->init(null, null);
                         break;
 
                     case 'p':
                         $this->console(sprintf('%28s %8s %24s %64s', 'NAME', 'VERSION', 'AUTHOR', 'DESCRIPTION'));
+
                         foreach ($this->plugins->getPlugins() as $plugin => $details) {
                             $this->console(sprintf("%28s %8s %24s %64s", $plugin::NAME, $plugin::VERSION, $plugin::AUTHOR, $plugin::DESCRIPTION));
                         }
@@ -295,17 +368,19 @@ class PRISM
 
                     case 'w':
                         $this->console(sprintf('%15s:%5s %5s', 'IP', 'PORT', 'LAST ACTIVITY'));
+
                         foreach ($this->http->getHttpInfo() as $v) {
                             $lastAct = time() - $v['lastActivity'];
                             $this->console(sprintf('%15s:%5s %13d', $v['ip'], $v['port'], $lastAct));
                         }
+
                         $this->console('Counted '.$this->http->getHttpNumClients().' http client'.(($this->http->getHttpNumClients() == 1) ? '' : 's'));
                         break;
 
                     default :
                         $this->console('Available Commands:');
                         $this->console('    h - show host info');
-                        $this->console('    I - re-initialise PRISM (reload ini files / reconnect to hosts / reset http socket');
+                        $this->console('    I - re-init PRISM (reload ini files / reconnect to hosts / reset http socket');
                         $this->console('    p - show plugin info');
                         $this->console('    x - exit PRISM');
                         $this->console('    w - show www connections');
@@ -316,11 +391,11 @@ class PRISM
             } // End while(numReady)
 
             // No need to do the maintenance check every turn
-            if ($this->_nextMaintenance > time ()) {
+            if ($this->_nextMaintenance > time()) {
                 continue;
             }
 
-            $this->_nextMaintenance = time () + MAINTENANCE_INTERVAL;
+            $this->_nextMaintenance = time() + MAINTENANCE_INTERVAL;
 
             if (!$this->hosts->maintenance()) {
                 $this->isRunning = false;
@@ -332,12 +407,22 @@ class PRISM
         } // End while(isRunning)
     }
 
+    /**
+     * I'm not sure yet what this does.
+     * 
+     * @param int  &$sleep  The amount of sleep time.
+     * @param bool &$uSleep Whether or not it is in microtime?
+     * 
+     * @return none
+     */
     private function _updateSelectTimeOut(&$sleep, &$uSleep)
     {
+        // Should these not be set as defaults instead of hard set here?
         $sleep = 1;
         $uSleep = null;
 
         $sleepTime = null;
+
         foreach ($this->plugins->getPlugins() as $plugin => $object) {
             $timeout = $object->executeTimers();
 
@@ -351,6 +436,7 @@ class PRISM
             $sleepTime = $timeout;
         } else {    // Set the timeout to the delta of now as compared to the next timer.
             list($sleep, $uSleep) = explode('.', sprintf('%1.6f', $timeNow - $sleepTime));
+
             if (($sleep >= 1 && $uSleep >= 1) || $uSleep >= 1000000) {
                 $sleep = 1;
                 $uSleep = null;
@@ -358,12 +444,23 @@ class PRISM
         }
     }
 
+    /**
+     * Destructs the PRISM Class
+     */
     public function __destruct()
     {
         // What makes this shutdown particularly safe?
         $this->console('Safe shutdown: ' . date($this->config->cvars['logFormat']));
     }
 
+    /**
+     * This is supposed to log stuff to a file, but I don't think it does...
+     * 
+     * @param string $line What to print?
+     * @param bool   $EOL  Unnecessary right now, why is this here?
+     * 
+     * @return none
+     */
     public function console($line, $EOL = true)
     {
         // Add log to file
@@ -371,13 +468,24 @@ class PRISM
         echo $line . (($EOL) ? PHP_EOL : '');
     }
 
+    /**
+     * I'm not 100% sure what this does
+     * 
+     * @param string $path      The starting path to determine the directory structure from.
+     * @param bool   $recursive Determines whether or not the function behaves in a recursive manner.
+     * @param varied $ext       The type of file?
+     * 
+     * @return varied
+     */
     public function get_dir_structure($path, $recursive = true, $ext = null)
     {
         $return = null;
+
         if (!is_dir($path)) {
             trigger_error('$path is not a directory!', E_USER_WARNING);
             return false;
         }
+
         if ($handle = opendir($path)) {
             while (false !== ($item = readdir($handle))) {
                 if ($item != '.' && $item != '..') {
@@ -396,10 +504,21 @@ class PRISM
             }
             closedir($handle);
         }
+
         return $return;
     }
 
-    // check if path1 is part of path2 (ie. if path1 is a base path of path2)
+    /**
+     * Check if a directory resides within another directory
+     * 
+     * Checks if $path1 is part of $path2
+     * (ie. if path1 is a base path of path2)
+     * 
+     * @param string $path1 Directory to Check Against.
+     * @param string $path2 Directory to Check.
+     * 
+     * @return bool
+     */
     public function isDirInDir($path1, $path2)
     {
         $p1 = explode('/', $path1);
@@ -418,6 +537,13 @@ class PRISM
         return true;
     }
 
+    /**
+     * Determines where the PHP executable resides on the system.
+     * 
+     * @param bool $windows If true the OS is windows and special searches are used.
+     * 
+     * @return string
+     */
     public function findPHPLocation($windows = false)
     {
         $phpLocation = '';
@@ -454,6 +580,13 @@ class PRISM
         return $phpLocation;
     }
 
+    /**
+     * Validates a PHP file
+     * 
+     * @param string $file PHP file to Validate
+     * 
+     * @return array
+     */
     public function validatePHPFile($file)
     {
         // Validate script
@@ -478,34 +611,49 @@ class PRISM
         return array(true, array());
     }
 
+    /**
+     * Converts the flags as a string to an integer.
+     * 
+     * @param string $flagsString Flag Info
+     * 
+     * @return mixed
+     */
     public function flagsToInteger($flagsString = '')
     {
-        # We don't have anything to parse.
+        // We don't have anything to parse.
         if ($flagsString == '') {
             return false;
         }
 
         $flagsBitwise = 0;
         for ($chrPointer = 0, $strLen = strlen($flagsString); $chrPointer < $strLen; ++$chrPointer) {
-            # Convert this charater to it's ASCII int value.
+            // Convert this charater to it's ASCII int value.
             $char = ord($flagsString{$chrPointer});
 
-            # We only want a (ASCII = 97) through z (ASCII 122), nothing else.
+            // We only want a (ASCII = 97) through z (ASCII 122), nothing else.
             if ($char < 97 || $char > 122) {
                 continue;
             }
 
-            # Check we have already set that flag, if so skip it!
+            // Check we have already set that flag, if so skip it!
             if ($flagsBitwise & (1 << ($char - 97))) {
                 continue;
             }
 
-            # Add the value to our $flagBitwise intager.
+            // Add the value to our $flagBitwise intager.
             $flagsBitwise += (1 << ($char - 97));
         }
+
         return $flagsBitwise;
     }
 
+    /**
+     * Converts bitwise flags to a string.
+     * 
+     * @param int $flagsBitwise Flag Info
+     * 
+     * @return string 
+     */
     public function flagsToString($flagsBitwise = 0)
     {
         $flagsString = '';
@@ -513,10 +661,10 @@ class PRISM
             return $flagsString;
         }
 
-        # This makes sure we only handle the flags we know by unsetting any unknown bits.
+        // This makes sure we only handle the flags we know by unsetting any unknown bits.
         $flagsBitwise = $flagsBitwise & ADMIN_ALL;
 
-        # Converts bits to the char forms.
+        // Converts bits to the char forms.
         for ($i = 0; $i < 26; ++$i) {
             $flagsString .= ($flagsBitwise & (1 << $i)) ? chr($i + 97) : null;
         }
@@ -524,6 +672,14 @@ class PRISM
         return $flagsString;
     }
 
+    /**
+     * Creates a random string of varied type.
+     * 
+     * @param int $len  Length of the string to generate.
+     * @param int $type What type of string to generate.
+     * 
+     * @return string
+     */
     public function createRandomString($len, $type = RAND_ASCII)
     {
         $out = '';
@@ -555,6 +711,14 @@ class PRISM
         return $out;
     }
 
+    /**
+     * ucwordsByChar
+     * 
+     * @param string $string    String to perform the action on.
+     * @param string $delimiter Delimiter to explode the string with.
+     * 
+     * @return string
+     */
     public function ucwordsByChar($string, $delimiter)
     {
         $out = '';
@@ -570,6 +734,13 @@ class PRISM
         return $out;
     }
 
+    /**
+     * Get the IP
+     * 
+     * @param string &$ip The IP to get.
+     * 
+     * @return mixed
+     */
     public function getIP(&$ip)
     {
         if (verifyIP($ip)) {
@@ -584,11 +755,28 @@ class PRISM
         return false;
     }
 
+    /**
+     * Verify that the IP is in fact an IP
+     * 
+     * Is this function really necessary?
+     * 
+     * @param string &$ip IP as a string.
+     * 
+     * @return bool
+     */
     public function verifyIP(&$ip)
     {
         return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
     }
 
+    /**
+     * Convert the time to a string.
+     * 
+     * @param int $int      Time as integer.
+     * @param int $fraction Fraction to divide time into.
+     * 
+     * @return string
+     */
     public function timeToString($int, $fraction=1000)
     {
         $seconds = floor($int / $fraction);
@@ -603,6 +791,16 @@ class PRISM
         }
     }
 
+    /**
+     * Converts the time to Str
+     * 
+     * Why are there all these redundant functions?
+     * 
+     * @param int $time     Time as Integer
+     * @param int $fraction Fraction to divide time into.
+     * 
+     * @return string
+     */
     public function timeToStr($time, $fraction=1000)
     {
         return preg_replace('/^(0+:)+/', '', timeToString($time, $fraction));

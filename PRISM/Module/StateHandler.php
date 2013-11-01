@@ -374,7 +374,7 @@ class ClientHandler extends PropertyMaster
     protected $UCID;			# Connection's Unique ID (0 = Host)
     protected $UName;			# UserName
     protected $PName;			# PlayerName
-    protected $Admin;			# TRUE If Client is Admin.
+    protected $Admin;			# true If Client is Admin.
     protected $Total;			# Number of Connections Including Host
     protected $Flags;			# 2 If Client is Remote
 
@@ -421,10 +421,10 @@ class ClientHandler extends PropertyMaster
     }
 
     // Is
-    public function isAdmin() { return ($this->isLFSAdmin() || $this->isPRISMAdmin) ? TRUE : FALSE; }
-    public function isLFSAdmin() { return ($this->UCID == 0 || $this->Admin == 1) ? TRUE : FALSE; }
+    public function isAdmin() { return ($this->isLFSAdmin() || $this->isPRISMAdmin) ? true : false; }
+    public function isLFSAdmin() { return ($this->UCID == 0 || $this->Admin == 1) ? true : false; }
     public function isPRISMAdmin() { return !!$this->PRISM; }
-    public function isRemote() { return ($this->Flags == 2) ? TRUE : FALSE; }
+    public function isRemote() { return ($this->Flags == 2) ? true : false; }
     public function getAccessFlags() { return $this->PRISM['accessFlags']; }
     public function getConnection() { return $this->PRISM['connection']; }
     public function isTemporary() { return $this->PRISM['temporary']; }
@@ -457,7 +457,7 @@ class PlayerHandler extends PropertyMaster
     protected $SetF;			# Setup flags (see below)
     protected $NumP;			# Number in race (same when leaving pits, 1 more if new)
     # Addon informaiton
-    public $inPits;			# For when a player is in our list, but not on track this is TRUE.
+    public $inPits;			# For when a player is in our list, but not on track this is true.
 
     // Constructor
     public function __construct(IS_NPL $NPL, StateHandler $parent)
@@ -487,12 +487,12 @@ class PlayerHandler extends PropertyMaster
         $this->Pass = $NPL->Pass;
         $this->SetF = $NPL->SetF;
         $this->NumP = $NPL->NumP;
-        $this->inPits = FALSE;
+        $this->inPits = false;
     }
 
     public function onPits(IS_PLP $PLP)
     {
-        $this->inPits = TRUE;
+        $this->inPits = true;
     }
 
     # Special case, handled within the parent class's onPlayerPacket method.
@@ -507,10 +507,10 @@ class PlayerHandler extends PropertyMaster
         $this->PName = $this->parent->clients[$TOC->NewUCID]->PName;
     }
 
-    protected $finished = FALSE;
+    protected $finished = false;
     public function onFinished(IS_FIN $FIN)
     {
-        $this->finished = TRUE;
+        $this->finished = true;
     }
 
     protected $result = array();
@@ -520,9 +520,9 @@ class PlayerHandler extends PropertyMaster
     }
 
     // Logic
-    public function isFemale() { return ($this->PType & 1) ? TRUE : FALSE; }
-    public function isAI() { return ($this->PType & 2) ? TRUE : FALSE; }
-    public function isRemote() { return ($this->PType & 4) ? TRUE : FALSE; }
+    public function isFemale() { return ($this->PType & 1) ? true : false; }
+    public function isAI() { return ($this->PType & 2) ? true : false; }
+    public function isRemote() { return ($this->PType & 4) ? true : false; }
     public function &isInPits() { return $this->inPits; }
 }
 
@@ -534,6 +534,6 @@ abstract class PropertyMaster
 {
     public function __get($property)
     {
-        return (isset($this->$property)) ? $this->$property : $return = NULL;
+        return (isset($this->$property)) ? $this->$property : $return = null;
     }
 }

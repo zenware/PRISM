@@ -27,7 +27,7 @@ define('TELNET_TTYPE_NUM',      3);
 */
 abstract class Screen extends ScreenContainer // Use as TelnetScreen
 {
-    abstract protected function write($data, $sendQPacket = FALSE);
+    abstract protected function write($data, $sendQPacket = false);
 
     protected $winSize				= null;
     protected $modeState			= 0;

@@ -27,7 +27,7 @@ define('HTTP_MAX_CONN', 1024);						// Max number of simultaneous http connectio
 
 class HTTP extends SectionHandler // HttpHandler
 {
-    private $httpSock		= NULL;
+    private $httpSock		= null;
     private $httpClients	= array();
     private $httpNumClients	= 0;
 
@@ -205,7 +205,7 @@ ININOTES;
 
         if ($this->httpVars['ip'] != '' && $this->httpVars['port'] > 0) {
             $this->httpSock = @stream_socket_server('tcp://'.$this->httpVars['ip'].':'.$this->httpVars['port'], $httpErrNo, $httpErrStr);
-            if (!is_resource($this->httpSock) || $this->httpSock === FALSE || $httpErrNo) {
+            if (!is_resource($this->httpSock) || $this->httpSock === false || $httpErrNo) {
                 console('Error opening http socket : '.$httpErrStr.' ('.$httpErrNo.')');
                 return false;
             } else {
@@ -334,7 +334,7 @@ ININOTES;
 
             // Accept the new connection
             $peerInfo = '';
-            $sock = @stream_socket_accept ($this->httpSock, NULL, $peerInfo);
+            $sock = @stream_socket_accept ($this->httpSock, null, $peerInfo);
             if (is_resource($sock)) {
                 stream_set_blocking ($sock, 0);
 

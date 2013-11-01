@@ -6,13 +6,13 @@ use PRISM\Module\Timer;
 class Timers
 {
     protected $timers = array();	# Array of timers.
-    protected $timeout = NULL;		# When the next timeout is, read only from outside of this class.
+    protected $timeout = null;		# When the next timeout is, read only from outside of this class.
 
     // Registers a callback method.
     protected function createTimer($callback, $interval = 1.0, $flags = Timer::CLOSE, $args = array())
     {
         # This will be the time when this timer is to trigger
-        $timestamp = microtime(TRUE) + $interval;
+        $timestamp = microtime(true) + $interval;
 
         # Check to make sure that another timer with same timestamp doesn't exist
         if (isset($this->timers["$timestamp"])) {
@@ -29,16 +29,16 @@ class Timers
         return ksort($this->timers);
     }
 
-    // Executes the elapsed timers, and returns when the next timer should execute or NULL if no timers are left.
+    // Executes the elapsed timers, and returns when the next timer should execute or null if no timers are left.
     public function executeTimers()
     {
         if (empty($this->timers)) {
-            return $this->timeout = NULL; # As we don't have any timers to check, we skip the rest of this function.
+            return $this->timeout = null; # As we don't have any timers to check, we skip the rest of this function.
         }
 
         $this->sortTimers();
 
-        $timeNow = microtime(TRUE);
+        $timeNow = microtime(true);
 
         foreach ($this->timers as $timestamp => &$timer) {
             # Check to see if the first timestamp has elpased.
@@ -57,7 +57,7 @@ class Timers
         $this->timeout = $timestamp;
 
         if (empty($this->timers)) {
-            return NULL;
+            return null;
         } else {
             return $this->timeout;
         }
