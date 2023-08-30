@@ -1,12 +1,14 @@
 {
     "name": "dygear/prism",
     "type": "project",
+    "description": "Opens a connection to Live For Speed through it's InSim protocol.",
     "homepage": "https://github.com/dygear/prism",
     "readme": "README.md",
     "license": "MIT",
     "authors": [],
     "support": {
-        "issues": "https://github.com/dygear/prism/issues"
+        "issues": "https://github.com/dygear/prism/issues",
+        "forum": "https://www.lfs.net/forum/312"
     },
     "suggest": {},
     "require": {
