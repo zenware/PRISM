@@ -7,7 +7,7 @@
 namespace PRISM;
 
 use PRISM\Modules\SectionHandler;
-require_once(ROOTPATH . '/modules/prism_phpparser.php');
+use PRISM\Modules\PHPParser;
 
 define('HTTP_AUTH_REALM', 'Prism administration');    // Token used for http auth & digest
 define('HTTP_KEEP_ALIVE', 10);                        // Keep-alive timeout in seconds

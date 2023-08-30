@@ -4,7 +4,7 @@
  * @package PRISM
  * @subpackage PHPParser
 */
-namespace PRISM;
+namespace PRISM\Modules;
 
 define('PRISM_SESSION_TIMEOUT', 900);        // how long a session is valid
 
