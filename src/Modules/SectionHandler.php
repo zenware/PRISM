@@ -6,8 +6,6 @@
 */
 namespace PRISM\Modules;
 
-use PRISM\Modules\IniLoader;
-
 abstract class SectionHandler extends IniLoader
 {
     abstract public function initialise();
