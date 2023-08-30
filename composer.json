@@ -12,11 +12,12 @@
     },
     "suggest": {},
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=7.2.0"
     },
     "require-dev": {
         "pestphp/pest": "^2.16",
-        "mockery/mockery": "^1.6"
+        "mockery/mockery": "^1.6",
+        "phpstan/phpstan": "^1.10"
     },
     "config": {
         "allow-plugins": {
@@ -37,7 +38,8 @@
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
         "cs-check": "php-cs-fixer fix --dry-run --diff",
-        "cs-fix": "php-cs-fixer fix"
+        "cs-fix": "php-cs-fixer fix",
+        "analyse": "vendor/bin/phpstan analyse"
     },
     "bin": ["bin/prism"]
 }

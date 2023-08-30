@@ -1,0 +1,671 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to static method queryAdmins\\(\\) on an unknown class PRISM\\\\Modules\\\\Interactive\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Constant HTTP_AUTH_REALM not found\\.$#"
+			count: 3
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Empty array passed to foreach\\.$#"
+			count: 2
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Function PRISM\\\\console not found\\.$#"
+			count: 3
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Function PRISM\\\\flagsToInteger not found\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Function flagsToString not found\\.$#"
+			count: 4
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccessFlags\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccessFlags\\(\\) has parameter \\$flags with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccessFlags\\(\\) has parameter \\$store with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccessFlags\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccount\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccount\\(\\) has parameter \\$accessFlags with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccount\\(\\) has parameter \\$connection with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccount\\(\\) has parameter \\$password with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccount\\(\\) has parameter \\$store with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:addAccount\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:adminExists\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:adminExists\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:changePassword\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:changePassword\\(\\) has parameter \\$password with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:changePassword\\(\\) has parameter \\$store with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:changePassword\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:deleteAccount\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:deleteAccount\\(\\) has parameter \\$store with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:deleteAccount\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:getAdminInfo\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:getAdminInfo\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:getAdminsInfo\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:getRealmDigest\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:getRealmDigest\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:initialise\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:isPasswordCorrect\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:isPasswordCorrect\\(\\) has parameter \\$password with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:isPasswordCorrect\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:makePermanent\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:makePermanent\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:revokeAccessFlags\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:revokeAccessFlags\\(\\) has parameter \\$flags with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:revokeAccessFlags\\(\\) has parameter \\$store with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:revokeAccessFlags\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:setAccessFlags\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:setAccessFlags\\(\\) has parameter \\$flags with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:setAccessFlags\\(\\) has parameter \\$store with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\AdminHandler\\:\\:setAccessFlags\\(\\) has parameter \\$username with no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Property PRISM\\\\Modules\\\\AdminHandler\\:\\:\\$admins has no type specified\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Unary operation \"~\" on mixed results in an error\\.$#"
+			count: 1
+			path: src/Modules/AdminHandler.php
+
+		-
+			message: "#^Function PRISM\\\\console not found\\.$#"
+			count: 3
+			path: src/Modules/ConfigHandler.php
+
+		-
+			message: "#^Function createRandomString not found\\.$#"
+			count: 1
+			path: src/Modules/ConfigHandler.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\ConfigHandler\\:\\:initialise\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/ConfigHandler.php
+
+		-
+			message: "#^Property PRISM\\\\Modules\\\\ConfigHandler\\:\\:\\$cvars has no type specified\\.$#"
+			count: 1
+			path: src/Modules/ConfigHandler.php
+
+		-
+			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			count: 2
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Constant ROOTPATH not found\\.$#"
+			count: 15
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Function console not found\\.$#"
+			count: 2
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:appendSection\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:appendSection\\(\\) has parameter \\$section with no type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:appendSection\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:createIniFile\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:createIniFile\\(\\) has parameter \\$desc with no type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:createIniFile\\(\\) has parameter \\$extraInfo with no type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:createIniFile\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:loadIniFile\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:loadIniFile\\(\\) has parameter \\$parseSections with no type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:loadIniFile\\(\\) has parameter \\$target with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:removeSection\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:removeSection\\(\\) has parameter \\$section with no type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:rewriteLine\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:rewriteLine\\(\\) has parameter \\$key with no type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:rewriteLine\\(\\) has parameter \\$section with no type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\IniLoader\\:\\:rewriteLine\\(\\) has parameter \\$value with no type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_splice expects array, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of function implode expects array\\|null, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Parameter \\#2 \\$options of method PRISM\\\\Modules\\\\IniLoader\\:\\:createIniFile\\(\\) expects array, string given\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Property PRISM\\\\Modules\\\\IniLoader\\:\\:\\$iniFile has no type specified\\.$#"
+			count: 1
+			path: src/Modules/IniLoader.php
+
+		-
+			message: "#^Access to constant VERSION on an unknown class PRISM\\\\Modules\\\\PHPInSimMod\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Call to method addHeader\\(\\) on an unknown class PRISM\\\\Modules\\\\HttpResponse\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Call to method setCookie\\(\\) on an unknown class PRISM\\\\Modules\\\\HttpResponse\\.$#"
+			count: 2
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Constant RAND_BINARY not found\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Constant ROOTPATH not found\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Function createRandomString not found\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Function validatePHPFile not found\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:cleanSessions\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has parameter \\$COOKIE with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has parameter \\$FILES with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has parameter \\$GET with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has parameter \\$POST with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has parameter \\$SERVER with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has parameter \\$file with no type specified\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Parameter \\#1 \\$data of function gzencode expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Parameter \\#3 \\$subject of function preg_replace expects array\\|string, string\\|false given\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Parameter \\$RESPONSE of method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has invalid type PRISM\\\\Modules\\\\HttpResponse\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Property PRISM\\\\Modules\\\\PHPParser\\:\\:\\$scriptCache has no type specified\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Property PRISM\\\\Modules\\\\PHPParser\\:\\:\\$sessions has no type specified\\.$#"
+			count: 1
+			path: src/Modules/PHPParser.php
+
+		-
+			message: "#^Method PRISM\\\\Modules\\\\SectionHandler\\:\\:initialise\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Modules/SectionHandler.php
+
+		-
+			message: "#^Call to static method cleanSessions\\(\\) on an unknown class PRISM\\\\PHPParser\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Constant CONN_CONNECTED not found\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Constant CONN_VERIFIED not found\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Constant SOCKTYPE_TCP not found\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Constant STREAM_READ_BYTES not found\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Function console not found\\.$#"
+			count: 23
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Instantiated class PRISM\\\\HostHandler not found\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Instantiated class PRISM\\\\HttpHandler not found\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Instantiated class PRISM\\\\PluginHandler not found\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Instantiated class PRISM\\\\TelnetHandler not found\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Left side of \\|\\| is always true\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:_errorHandler\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:_errorHandler\\(\\) has parameter \\$errcontext with no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:_errorHandler\\(\\) has parameter \\$errfile with no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:_errorHandler\\(\\) has parameter \\$errline with no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:_errorHandler\\(\\) has parameter \\$errno with no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:_errorHandler\\(\\) has parameter \\$errstr with no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:initialise\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:initialise\\(\\) has parameter \\$argc with no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:initialise\\(\\) has parameter \\$argv with no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:main\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:start\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:updateSelectTimeOut\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:updateSelectTimeOut\\(\\) has parameter \\$sleep with no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Method PRISM\\\\PHPInSimMod\\:\\:updateSelectTimeOut\\(\\) has parameter \\$uSleep with no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of function dirname expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$admins has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$config has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$hosts has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$http has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$isRunning has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$isWindows has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$nextMaintenance has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$plugins has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$sleep has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$telnet has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Property PRISM\\\\PHPInSimMod\\:\\:\\$uSleep has no type specified\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Right side of && is always true\\.$#"
+			count: 1
+			path: src/PHPInSimMod.php
+
+		-
+			message: "#^Undefined variable\\: \\$timeNow$#"
+			count: 1
+			path: src/PHPInSimMod.php
