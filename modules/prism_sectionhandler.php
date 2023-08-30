@@ -6,7 +6,7 @@
 */
 namespace PRISM;
 
-require_once(ROOTPATH . '/modules/prism_iniloader.php');
+use PRISM\Modules\IniLoader;
 
 abstract class SectionHandler extends IniLoader
 {
