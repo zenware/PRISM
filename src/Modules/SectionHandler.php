@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage SectionHandler
 */
+
 namespace PRISM\Modules;
 
 abstract class SectionHandler extends IniLoader

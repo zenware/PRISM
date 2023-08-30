@@ -4,12 +4,12 @@
  * @package PRISM
  * @subpackage Config
 */
+
 namespace PRISM\Modules;
 
 class ConfigHandler extends SectionHandler
 {
-    public $cvars    = array
-        (
+    public $cvars    = array(
             'prefix'        => '!',
             'debugMode'        => PRISM_DEBUG_ALL,
             'logMode'        => 7,
@@ -33,22 +33,19 @@ class ConfigHandler extends SectionHandler
     {
         global $PRISM;
 
-        if ($this->loadIniFile($this->cvars, FALSE))
-        {
-            if ($this->cvars['debugMode'] & PRISM_DEBUG_CORE)
+        if ($this->loadIniFile($this->cvars, false)) {
+            if ($this->cvars['debugMode'] & PRISM_DEBUG_CORE) {
                 \PRISM\console('Loaded '.$this->iniFile);
-        }
-        else
-        {
+            }
+        } else {
             $this->cvars['secToken'] = str_replace(array('"', '\'', ' '), '.', createRandomString(16));
 
             \PRISM\console('Using cvars defaults.');
-            if ($this->createIniFile('PHPInSimMod Configuration Variables', array('prism' => &$this->cvars)))
+            if ($this->createIniFile('PHPInSimMod Configuration Variables', array('prism' => &$this->cvars))) {
                 \PRISM\console('Generated config/'.$this->iniFile);
+            }
         }
 
         return true;
     }
 }
-
-?>

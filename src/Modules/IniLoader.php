@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage INILonader
 */
+
 namespace PRISM\Modules;
 
 /**
@@ -18,30 +19,29 @@ abstract class IniLoader
 {
     protected $iniFile = '';
 
-    protected function loadIniFile(array &$target, $parseSections = TRUE)
+    protected function loadIniFile(array &$target, $parseSections = true)
     {
-        $iniVARs = FALSE;
+        $iniVARs = false;
 
         // Should parse the $PrismDir/config/***.ini file, and load them into the passed $target array.
         $iniPath = ROOTPATH . '/configs/'.$this->iniFile;
 
-        if (!file_exists($iniPath))
-        {
+        if (!file_exists($iniPath)) {
             console('Could not find ini file "'.$this->iniFile.'"');
-            return FALSE;
+            return false;
         }
-        if (($iniVARs = parse_ini_file($iniPath, $parseSections)) === FALSE)
-        {
+        if (($iniVARs = parse_ini_file($iniPath, $parseSections)) === false) {
             console('Could not parse ini file "'.$this->iniFile.'"');
-            return FALSE;
+            return false;
         }
 
         // Merge iniVARs into target (array_merge didn't seem to work - maybe because target is passed by reference?)
-        foreach ($iniVARs as $k => $v)
+        foreach ($iniVARs as $k => $v) {
             $target[$k] = $v;
+        }
 
         # At this point we're always successful
-        return TRUE;
+        return true;
     }
 
 
@@ -49,14 +49,14 @@ abstract class IniLoader
     {
         // Check if config folder exists
         if (!file_exists(ROOTPATH . '/configs/') &&
-            !@mkdir(ROOTPATH . '/configs/'))
-        {
-            return FALSE;
+            !@mkdir(ROOTPATH . '/configs/')) {
+            return false;
         }
 
         // Check if file doesn't already exist
-        if (file_exists(ROOTPATH . '/configs/'.$this->iniFile))
-            return FALSE;
+        if (file_exists(ROOTPATH . '/configs/'.$this->iniFile)) {
+            return false;
+        }
 
         // Generate file contents
         $text = '; '.$desc.' (automatically generated)'.PHP_EOL;
@@ -64,35 +64,35 @@ abstract class IniLoader
         $text .= $extraInfo;
 
         $main = '';
-        foreach ($options as $section => $data)
-        {
-            if (is_array($data))
-            {
+        foreach ($options as $section => $data) {
+            if (is_array($data)) {
                 $main .= PHP_EOL.'['.$section.']'.PHP_EOL;
-                foreach ($data as $key => $value)
-                {
+                foreach ($data as $key => $value) {
                     $main .= $key.' = '.((is_numeric($value)) ? $value : '"'.$value.'"').PHP_EOL;
                 }
             }
         }
 
-        if ($main == '')
-            return FALSE;
+        if ($main == '') {
+            return false;
+        }
 
         $text .= $main.PHP_EOL;
 
         // Write contents
-        if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, $text))
-            return FALSE;
+        if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, $text)) {
+            return false;
+        }
 
-        return TRUE;
+        return true;
     }
 
     protected function rewriteLine($section, $key, $value)
     {
         // Check if file exists
-        if (!file_exists(ROOTPATH.'/configs/'.$this->iniFile))
+        if (!file_exists(ROOTPATH.'/configs/'.$this->iniFile)) {
             return false;
+        }
 
         $newValue = (is_numeric($value)) ? $value : '"'.$value.'"';
 
@@ -101,23 +101,20 @@ abstract class IniLoader
 
         // Loop through the lines to detect Section and then Key
         $foundSection = false;
-        foreach ($lines as $num => &$line)
-        {
+        foreach ($lines as $num => &$line) {
             $matches = array();
-            if (preg_match('/^\s*\[(.+)\]\s*$/', $line, $matches))
-            {
-                if ($matches[1] == $section)
+            if (preg_match('/^\s*\[(.+)\]\s*$/', $line, $matches)) {
+                if ($matches[1] == $section) {
                     $foundSection = true;
-                else
-                {
+                } else {
                     // Check if we were in the correct section, but didn't find the line we were looking for
-                    if ($foundSection)
-                    {
+                    if ($foundSection) {
                         // Create a new line and insert it.
                         $insert = $key.' = '.$newValue.PHP_EOL.PHP_EOL;
                         array_splice($lines, $num, 0, array($insert));
-                        if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, implode(PHP_EOL, $lines).PHP_EOL))
+                        if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, implode(PHP_EOL, $lines).PHP_EOL)) {
                             return false;
+                        }
                         return true;
                     }
                     $foundSection = false;
@@ -125,23 +122,23 @@ abstract class IniLoader
                 continue;
             }
 
-            if ($foundSection && preg_match('/^'.$key.'\s*=\s*.*$/', $line))
-            {
+            if ($foundSection && preg_match('/^'.$key.'\s*=\s*.*$/', $line)) {
                 // Rewrite the line and store the updated file
                 $line = preg_replace('/^'.$key.'\s*=\s*"?.+"?(\s*;.*)?$/U', $key.' = '.$newValue.'\\1', $line);
-                if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, implode(PHP_EOL, $lines).PHP_EOL))
+                if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, implode(PHP_EOL, $lines).PHP_EOL)) {
                     return false;
+                }
                 return true;
             }
         }
 
         // In case the last section of the file is the section we were looking for,
         // but it did not contain the value, then we need to add it here.
-        if ($foundSection)
-        {
+        if ($foundSection) {
             $append = PHP_EOL.$key.' = '.$newValue.PHP_EOL.PHP_EOL;
-            if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, $append, FILE_APPEND))
+            if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, $append, FILE_APPEND)) {
                 return false;
+            }
         }
 
         return true;
@@ -150,8 +147,7 @@ abstract class IniLoader
     protected function appendSection($section, array &$values)
     {
         // Check if file exists
-        if (!file_exists(ROOTPATH.'/configs/'.$this->iniFile))
-        {
+        if (!file_exists(ROOTPATH.'/configs/'.$this->iniFile)) {
             // Just create a new file for the new section then...
             $this->createIniFile($this->iniFile, 'Configuration File', array($section => $values));
             return true;
@@ -159,13 +155,13 @@ abstract class IniLoader
 
         // Loop through the new values
         $append = PHP_EOL.'['.$section.']'.PHP_EOL;
-        foreach ($values as $key => $value)
-        {
+        foreach ($values as $key => $value) {
             $append .= $key.' = '.((is_numeric($value)) ? $value : '"'.$value.'"').PHP_EOL;
         }
 
-        if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, $append, FILE_APPEND))
+        if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, $append, FILE_APPEND)) {
             return false;
+        }
 
         return true;
     }
@@ -173,8 +169,9 @@ abstract class IniLoader
     protected function removeSection($section)
     {
         // Check if file exists
-        if (!file_exists(ROOTPATH.'/configs/'.$this->iniFile))
+        if (!file_exists(ROOTPATH.'/configs/'.$this->iniFile)) {
             return false;
+        }
 
         // Read the contents of the file into an array of lines
         $lines = file(ROOTPATH.'/configs/'.$this->iniFile, FILE_IGNORE_NEW_LINES);
@@ -182,28 +179,27 @@ abstract class IniLoader
         // Loop through the lines to detect Section and then Key
         $newLines = array();
         $foundSection = false;
-        foreach ($lines as $num => &$line)
-        {
+        foreach ($lines as $num => &$line) {
             $matches = array();
-            if (preg_match('/^\s*\[(.+)\]\s*$/', $line, $matches))
-            {
-                if ($matches[1] == $section)
+            if (preg_match('/^\s*\[(.+)\]\s*$/', $line, $matches)) {
+                if ($matches[1] == $section) {
                     $foundSection = true;
-                else
+                } else {
                     $foundSection = false;
+                }
             }
 
-            if ($foundSection == true)
+            if ($foundSection == true) {
                 continue;
+            }
 
             $newLines[] = $line;
         }
 
-        if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, implode(PHP_EOL, $newLines)))
+        if (!file_put_contents(ROOTPATH.'/configs/'.$this->iniFile, implode(PHP_EOL, $newLines))) {
             return false;
+        }
 
         return true;
     }
 }
-
-?>
