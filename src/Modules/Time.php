@@ -5,48 +5,57 @@
  * @subpackage Time
  * @copyright the AMX Mod X Development Team & The PRISM Development Team.
 */
-namespace PRISM;
+
+namespace PRISM\Modules;
 
 class Time
 {
     // Time unit types.
-    const UNIT_SECONDS        = 0;
-    const UNIT_MINUTES        = 1;
-    const UNIT_HOURS        = 2;
-    const UNIT_DAYS            = 3;
-    const UNIT_WEEKS        = 4;
+    public const UNIT_SECONDS        = 0;
+    public const UNIT_MINUTES        = 1;
+    public const UNIT_HOURS        = 2;
+    public const UNIT_DAYS            = 3;
+    public const UNIT_WEEKS        = 4;
 
     // The number of seconds that are in each time unit.
-    const SECONDS_IN_MINUTE = 60;
-    const SECONDS_IN_HOUR   = 3600;
-    const SECONDS_IN_DAY    = 86400;
-    const SECONDS_IN_WEEK   = 604800;
+    public const SECONDS_IN_MINUTE = 60;
+    public const SECONDS_IN_HOUR   = 3600;
+    public const SECONDS_IN_DAY    = 86400;
+    public const SECONDS_IN_WEEK   = 604800;
 
     /**
      * @desc: By Brad for AMX Mod X.
      * @param: Unit - The number of time units you want translated into verbose text.
      * @param: Type - The type of unit (i.e. seconds, minutes, hours, days, weeks) that you are passing in.
     */
-    static function getLength($unit, $type = Time::UNIT_SECONDS)
+    public static function getLength($unit, $type = Time::UNIT_SECONDS)
     {
         # Ensure the varables are of the correct datatype.
         $unit = (int) $unit;
         $type = (int) $type;
 
         # If our units happens to equal zero, skip.
-        if ($unit == 0)
+        if ($unit == 0) {
             return '0 seconds';
+        }
 
         # Determine the number of each time unit there are.
-        $weeks = 0; $days = 0; $hours = 0; $minutes = 0; $seconds = 0;
+        $weeks = 0;
+        $days = 0;
+        $hours = 0;
+        $minutes = 0;
+        $seconds = 0;
 
         # Handle the various scales of time.
-        switch ($type)
-        {
+        switch ($type) {
             case Time::UNIT_SECONDS: $seconds = $unit;
+                // no break
             case Time::UNIT_MINUTES: $seconds = $unit * Time::SECONDS_IN_MINUTE;
+                // no break
             case Time::UNIT_HOURS:   $seconds = $unit * Time::SECONDS_IN_HOUR;
+                // no break
             case Time::UNIT_DAYS:    $seconds = $unit * Time::SECONDS_IN_DAY;
+                // no break
             case Time::UNIT_WEEKS:   $seconds = $unit * Time::SECONDS_IN_WEEK;
         }
 
@@ -71,20 +80,24 @@ class Time
         // Translate the unit counts into verbose text
         $timeElement = array();
 
-        if ($weeks > 0)
+        if ($weeks > 0) {
             $timeElement[] = sprintf("%i %s", $weeks, ($weeks == 1) ? "week" : "weeks");
-        if ($days > 0)
+        }
+        if ($days > 0) {
             $timeElement[] = sprintf("%i %s", $days, ($days == 1) ? "day" : "days");
-        if ($hours > 0)
+        }
+        if ($hours > 0) {
             $timeElement[] = sprintf("%i %s", $hours, ($hours == 1) ? "hour" : "hours");
-        if ($minutes > 0)
+        }
+        if ($minutes > 0) {
             $timeElement[] = sprintf("%i %s", $minutes, ($minutes == 1) ? "minute" : "minutes");
-        if ($seconds > 0)
+        }
+        if ($seconds > 0) {
             $timeElement[] = sprintf("%i %s", $seconds, ($seconds == 1) ? "second" : "seconds");
+        }
 
         // Outputs are final result in the correct format.
-        switch(count($timeElement))
-        {
+        switch(count($timeElement)) {
             case 1: return sprintf("%s", $timeElement[0]);
             case 2: return sprintf("%s & %s", $timeElement[0], $timeElement[1]);
             case 3: return sprintf("%s, %s & %s", $timeElement[0], $timeElement[1], $timeElement[2]);
@@ -93,5 +106,3 @@ class Time
         }
     }
 }
-
-?>
