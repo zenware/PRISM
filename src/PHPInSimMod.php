@@ -25,15 +25,13 @@ define('PLUGIN_STOP',            2);            # Plugin stops timer from trigge
 error_reporting(E_ALL);
 ini_set('display_errors',        'true');
 
-// dirname can have platform dependent issues https://www.php.net/manual/en/function.dirname.php
-// When I configure this to target the parent's parent...
 // ROOTPATH is intentionally being configured as the root of the git repository rather than the root of this file.
 // This is so configs/data/etc. can remain where they are while refactoring.
 define('ROOTPATH', dirname(dirname(realpath(__FILE__))));
 
 // the REQUIRED modules for PRISM.
+use PRISM\Modules;
 require_once(ROOTPATH . '/modules/prism_functions.php');
-require_once(ROOTPATH . '/modules/prism_config.php');
 require_once(ROOTPATH . '/modules/prism_packets.php');
 require_once(ROOTPATH . '/modules/prism_hosts.php');
 require_once(ROOTPATH . '/modules/prism_statehandler.php');
@@ -43,14 +41,6 @@ require_once(ROOTPATH . '/modules/prism_admins.php');
 require_once(ROOTPATH . '/modules/prism_timers.php');
 require_once(ROOTPATH . '/modules/prism_translations.php');
 require_once(ROOTPATH . '/modules/prism_plugins.php');
-
-/*
-$PRISM = new PHPInSimMod();
-//echo(var_dump(get_class_methods($PRISM)));
-//exit(0);
-$PRISM->initialise($argc, $argv);
-$PRISM->start();
-*/
 
 /**
  * PHPInSimMod
@@ -123,7 +113,7 @@ class PHPInSimMod
         if (preg_match('/^win/i', PHP_OS))
             $this->isWindows = true;
 
-        $this->config    = new ConfigHandler();
+        $this->config    = new Modules\ConfigHandler();
         $this->hosts    = new HostHandler();
         $this->plugins    = new PluginHandler();
         $this->http        = new HttpHandler();

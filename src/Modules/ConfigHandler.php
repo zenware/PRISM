@@ -4,9 +4,7 @@
  * @package PRISM
  * @subpackage Config
 */
-namespace PRISM;
-
-use PRISM\Modules\SectionHandler;
+namespace PRISM\Modules;
 
 class ConfigHandler extends SectionHandler
 {
@@ -38,15 +36,15 @@ class ConfigHandler extends SectionHandler
         if ($this->loadIniFile($this->cvars, FALSE))
         {
             if ($this->cvars['debugMode'] & PRISM_DEBUG_CORE)
-                console('Loaded '.$this->iniFile);
+                \PRISM\console('Loaded '.$this->iniFile);
         }
         else
         {
             $this->cvars['secToken'] = str_replace(array('"', '\'', ' '), '.', createRandomString(16));
 
-            console('Using cvars defaults.');
+            \PRISM\console('Using cvars defaults.');
             if ($this->createIniFile('PHPInSimMod Configuration Variables', array('prism' => &$this->cvars)))
-                console('Generated config/'.$this->iniFile);
+                \PRISM\console('Generated config/'.$this->iniFile);
         }
 
         return true;
