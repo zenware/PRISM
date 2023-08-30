@@ -7,6 +7,7 @@
  * @subpackage Clients
  * @subpackage Players
 */
+namespace PRISM;
 
 class StateHandler extends PropertyMaster
 {

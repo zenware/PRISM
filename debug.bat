@@ -1,3 +1,3 @@
 @echo off
-php -e PHPInSimMod.php %1 %2 > deb.log
+php -e src\Entrypoint.php %1 %2 > deb.log
 pause

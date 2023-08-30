@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Admin
 */
+namespace PRISM;
 
 require_once(ROOTPATH . '/modules/prism_sectionhandler.php');
 

@@ -1,4 +1,5 @@
 <?php
+namespace PRISM;
 
 /**
  * "Singleton" class to manage buttons!

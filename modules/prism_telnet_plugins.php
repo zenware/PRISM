@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Telnet
 */
+namespace PRISM;
 
 class TSPluginSection extends TSSection
 {

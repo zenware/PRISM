@@ -1,4 +1,6 @@
 <?php
+namespace PRISM;
+
 /**
  * Overwriting some methods. Should probably be merged into ISP_BTN.
  */

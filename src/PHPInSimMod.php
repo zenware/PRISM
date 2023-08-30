@@ -7,6 +7,7 @@
 
 /* Defines */
 // PRISM
+namespace PRISM;
 
 define('PRISM_DEBUG_CORE',        1);            # Shows Debug Messages From the Core
 define('PRISM_DEBUG_SOCKETS',    2);            # Shows Debug Messages From the Sockets Module
@@ -24,7 +25,11 @@ define('PLUGIN_STOP',            2);            # Plugin stops timer from trigge
 error_reporting(E_ALL);
 ini_set('display_errors',        'true');
 
-define('ROOTPATH', dirname(realpath(__FILE__)));
+// dirname can have platform dependent issues https://www.php.net/manual/en/function.dirname.php
+// When I configure this to target the parent's parent...
+// ROOTPATH is intentionally being configured as the root of the git repository rather than the root of this file.
+// This is so configs/data/etc. can remain where they are while refactoring.
+define('ROOTPATH', dirname(dirname(realpath(__FILE__))));
 
 // the REQUIRED modules for PRISM.
 require_once(ROOTPATH . '/modules/prism_functions.php');
@@ -39,10 +44,13 @@ require_once(ROOTPATH . '/modules/prism_timers.php');
 require_once(ROOTPATH . '/modules/prism_translations.php');
 require_once(ROOTPATH . '/modules/prism_plugins.php');
 
-
+/*
 $PRISM = new PHPInSimMod();
+//echo(var_dump(get_class_methods($PRISM)));
+//exit(0);
 $PRISM->initialise($argc, $argv);
 $PRISM->start();
+*/
 
 /**
  * PHPInSimMod
@@ -84,7 +92,31 @@ class PHPInSimMod
     public function __construct()
     {
         // This reregisters our autoload magic function into the class.
-        spl_autoload_register(__CLASS__ . '::_autoload');
+        spl_autoload_register(function ($className) {
+            $className = ltrim($className, '\\');
+            $fileName = '';
+            $namespace = '';
+
+            if ($lastNsPos = strrpos($className, '\\')) {
+                $namespace = substr($className, 0, $lastNsPos);
+                $className = substr($className, $lastNsPos + 1);
+                $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+            }
+            $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+        
+            //require $fileName;
+
+            $directories = ["modules" . DIRECTORY_SEPARATOR, "plugins" . DIRECTORY_SEPARATOR];
+            foreach ($directories as $directory) {
+                $filePath = "{$directory}{$fileName}";
+                if (file_exists($filePath)) {
+                    // If I just use 'require' it will attempt to include multiple times which isn't allowed.
+                    require_once $filePath;
+                }
+                //include_once(ROOTPATH . "/" . $directory . "prism_" . $className . ".php");
+            }
+        });
+        // https://www.php.net/manual/en/function.set-error-handler.php
         set_error_handler(__CLASS__ . '::_errorHandler', E_ALL | E_STRICT);
 
         // Windows OS check
@@ -99,14 +131,10 @@ class PHPInSimMod
         $this->admins    = new AdminHandler();
     }
 
-    // Pseudo Magic Functions
-    private static function _autoload($className)
+    public static function _errorHandler($errno, $errstr, $errfile, $errline, $errcontext=null)
     {
-        require_once(ROOTPATH . "/modules/prism_" . strtolower($className) . ".php");
-    }
-
-    public static function _errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
-    {
+        // https://www.php.net/manual/en/function.set-error-handler.php
+        // errcontext is deprecated in PHP 7.2.0 and REMOVED in PHP 8.0.0
         # This error code is not included in error_reporting
         if (!(error_reporting() & $errno))
             return;
@@ -198,7 +226,7 @@ class PHPInSimMod
         $this->main();
     }
 
-    private function main()
+    protected function main()
     {
         while ($this->isRunning === true) {
             // Setup our listen arrays

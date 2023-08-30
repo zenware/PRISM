@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Http
 */
+namespace PRISM;
 
 require_once(ROOTPATH . '/modules/prism_sectionhandler.php');
 require_once(ROOTPATH . '/modules/prism_phpparser.php');

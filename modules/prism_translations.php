@@ -1,4 +1,6 @@
 <?php
+namespace PRISM;
+
 class Translations extends Timers
 {
     /* Translation Engine Stuff */

@@ -4,6 +4,8 @@
  * @package PRISM
  * @subpackage Database
 */
+namespace PRISM;
+
 class DatabaseHandler
 {
     # Hold an instance of the class

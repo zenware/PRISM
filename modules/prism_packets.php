@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Packet
  */
+namespace PRISM;
 
 /* Start of PRISM PACKET HEADER */
 abstract class Struct

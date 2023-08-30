@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage CRON
 */
+namespace PRISM;
 
 /**
 * Filur proving, once again, that he is a much better programmer then Dygear.

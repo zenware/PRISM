@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Telnet
 */
+namespace PRISM;
 
 require_once(ROOTPATH . '/modules/prism_telnet_screen.php');
 

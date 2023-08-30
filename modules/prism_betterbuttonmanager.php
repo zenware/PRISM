@@ -1,4 +1,6 @@
 <?php
+namespace PRISM;
+
 class betterButtonManager
 {
     protected $UCID;

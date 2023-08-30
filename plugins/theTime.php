@@ -1,4 +1,6 @@
 <?php
+namespace PRISM;
+
 class theTime extends Plugins
 {
 	const URL = 'http://lfsforum.net/forumdisplay.php?f=312';

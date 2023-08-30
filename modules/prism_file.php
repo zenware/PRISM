@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage File
 */
+namespace PRISM;
 
 class file {
     const EXTENSIONS = array(

@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage SectionHandler
 */
+namespace PRISM;
 
 require_once(ROOTPATH . '/modules/prism_iniloader.php');
 

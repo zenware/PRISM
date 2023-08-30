@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Telnet
 */
+namespace PRISM;
 
 class TSHostSection extends TSSection
 {

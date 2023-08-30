@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage PTH
 */
+namespace PRISM;
 
 require_once(ROOTPATH . '/modules/prism_geometry.php');
 

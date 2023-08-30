@@ -1,4 +1,6 @@
 <?php
+namespace PRISM;
+
 class Timers
 {
     protected $timers = array();    # Array of timers.

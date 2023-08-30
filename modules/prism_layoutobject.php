@@ -4,6 +4,8 @@
  * Properties are private by design.
  * You should never edit an object. Just create a new one as you need to remove the old object and add the new one.
  */
+namespace PRISM;
+
 class LayoutObject {
     const UNPACK = 'sX/sY/CZ/CFlags/CIndex/CHeading';
     const PACK = 'ssCCCC';

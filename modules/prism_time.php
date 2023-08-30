@@ -5,6 +5,7 @@
  * @subpackage Time
  * @copyright the AMX Mod X Development Team & The PRISM Development Team.
 */
+namespace PRISM;
 
 class Time
 {

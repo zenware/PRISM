@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage INILonader
 */
+namespace PRISM;
 
 /**
  * protected IniLoader methods (to be extended by other classes, like the section handlers)

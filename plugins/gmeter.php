@@ -1,4 +1,6 @@
 <?php
+namespace PRISM;
+
 class gmeter extends Plugins {
 	const URL = 'http://lfsforum.net/forumdisplay.php?f=312';
 	const NAME = 'G-Force Meter';

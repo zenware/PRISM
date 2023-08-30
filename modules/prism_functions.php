@@ -1,4 +1,5 @@
 <?php
+namespace PRISM;
 
 function console($line, $EOL = true, $fgcolor = "light_gray", $bgcolor = "black")
 {

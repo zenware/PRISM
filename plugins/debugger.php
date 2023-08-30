@@ -1,4 +1,6 @@
 <?php
+namespace PRISM;
+
 class debugger extends Plugins
 {
 	// Set our URL, Name, Author, Version, Description

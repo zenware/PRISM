@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Telnet
 */
+namespace PRISM;
 
 // IAC ACTION OPTION (3 bytes)
 define('TELNET_OPT_BINARY',			chr(0x00));	// Binary (RCF 856)

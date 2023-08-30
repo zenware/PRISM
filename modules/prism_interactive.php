@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Interactive
 */
+namespace PRISM;
 
 class Interactive
 {

@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Geometry
 */
+namespace PRISM;
 
 class Point2D
 {

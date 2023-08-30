@@ -4,6 +4,8 @@
  * @package PRISM
  * @subpackage SMX
 */
+namespace PRISM;
+
 // Simple Mesh eXport
 class SMX
 {

@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Plugin
 */
+namespace PRISM;
 
 define('PRINT_CHAT',        (1 << 0));        # 1
 define('PRINT_RCM',            (1 << 1));        # 2
@@ -66,6 +67,9 @@ class PluginHandler extends SectionHandler
 
     public function loadPlugins()
     {
+        /**
+         * TODO: This needs to be modified to support plugins under the PRISM namespace.
+         */
         global $PRISM;
 
         $loadedPluginCount = 0;
@@ -113,7 +117,10 @@ class PluginHandler extends SectionHandler
 
             include_once("$pluginPath/$pluginSection.php");
 
-            $this->plugins[$pluginSection] = new $pluginSection($this);
+            // TODO: Create a new var which is "PRISM\$pluginSection";
+            // May have caused a PHP parse error....
+            $namespacedInstantiator = "PRISM\\{$pluginSection}";
+            $this->plugins[$pluginSection] = new $namespacedInstantiator($this);
 
             ++$loadedPluginCount;
         }

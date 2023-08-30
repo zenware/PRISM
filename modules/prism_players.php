@@ -4,6 +4,7 @@
  * @package PRISM
  * @subpackage Players
 */
+namespace PRISM;
 
 class PlayerHandler extends HostHandler
 {
