@@ -4,9 +4,7 @@
  * @package PRISM
  * @subpackage Admin
 */
-namespace PRISM;
-
-use PRISM\Modules\SectionHandler;
+namespace PRISM\Modules;
 
 // Admin Flags
 define('ADMIN_NONE',                0);            # No flags.
@@ -72,11 +70,10 @@ class AdminHandler extends SectionHandler
 
         if ($this->loadIniFile($this->admins)) {
             if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
-                console('Loaded '.$this->iniFile);
+                \PRISM\console('Loaded '.$this->iniFile);
             }
         } else {
             # We ask the client to manually input the user details here.
-            require_once(ROOTPATH . '/modules/prism_interactive.php');
             Interactive::queryAdmins($this->admins);
 
             # Then build a admins.ini file based on these details provided.
@@ -126,7 +123,7 @@ class AdminHandler extends SectionHandler
 
 ININOTES;
             if ($this->createIniFile('Admins Configuration File', $this->admins, $extraInfo)) {
-                console('Generated config/'.$this->iniFile);
+                \PRISM\console('Generated config/'.$this->iniFile);
             }
         }
 
@@ -145,7 +142,7 @@ ININOTES;
 
             // Convert flags?
             if (!is_numeric($details['accessFlags'])) {
-                $details['accessFlags'] = flagsToInteger($details['accessFlags']);
+                $details['accessFlags'] = \PRISM\flagsToInteger($details['accessFlags']);
             } else {
                 $this->rewriteLine($username, 'accessFlags', flagsToString($details['accessFlags']));
             }
@@ -287,7 +284,7 @@ ININOTES;
         $username = strToLower($username);
         global $PRISM;
 
-        console('Writing new password for '.$username);
+        \PRISM\console('Writing new password for '.$username);
 
         if (!isset($this->admins[$username])) {
             return false;

@@ -37,7 +37,6 @@ require_once(ROOTPATH . '/modules/prism_hosts.php');
 require_once(ROOTPATH . '/modules/prism_statehandler.php');
 require_once(ROOTPATH . '/modules/prism_http.php');
 require_once(ROOTPATH . '/modules/prism_telnet.php');
-require_once(ROOTPATH . '/modules/prism_admins.php');
 require_once(ROOTPATH . '/modules/prism_timers.php');
 require_once(ROOTPATH . '/modules/prism_translations.php');
 require_once(ROOTPATH . '/modules/prism_plugins.php');
@@ -118,7 +117,7 @@ class PHPInSimMod
         $this->plugins    = new PluginHandler();
         $this->http        = new HttpHandler();
         $this->telnet    = new TelnetHandler();
-        $this->admins    = new AdminHandler();
+        $this->admins    = new Modules\AdminHandler();
     }
 
     public static function _errorHandler($errno, $errstr, $errfile, $errline, $errcontext=null)
