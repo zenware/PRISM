@@ -1,0 +1,40 @@
+#!/usr/bin/env php
+<?php
+
+$autoload = null;
+
+$autoloadFiles = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php'
+];
+
+foreach ( $autoloadFiles as $autoloadFile ) {
+    if (file_exists( $autoloadFile ) ) {
+        $autoload = $autoloadFile;
+        break;
+    }
+}
+
+if (!$autoload) {
+    echo "Autoload file not found; try 'composer dump-autoload' first." . PHP_EOL;
+    exit(1);
+}
+
+require $autoload;
+
+$MAX_ATTEMPTS = 5;
+$attempts = 0;
+
+do {
+    try {
+        $PRISM = new \PRISM\PHPInSimMod();
+        $PRISM->initialise($argc, $argv);
+        $PRISM->start();
+    } catch ( \Exception $e ) {
+        $attempts++;
+        sleep(3);
+        continue;
+    }
+
+    break;
+} while ( $attempts < $MAX_ATTEMPTS );

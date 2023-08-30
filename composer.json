@@ -34,9 +34,10 @@
         }
     },
     "scripts": {
-        "cs:check": "php-cs-fixer fix --dry-run --diff",
-        "cs:fix": "php-cs-fixer fix",
-        "test": "vendor/bin/pest"
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "cs-check": "php-cs-fixer fix --dry-run --diff",
+        "cs-fix": "php-cs-fixer fix"
     },
-    "bin": []
+    "bin": ["bin/prism"]
 }
