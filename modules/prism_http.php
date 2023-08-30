@@ -6,7 +6,7 @@
 */
 namespace PRISM;
 
-require_once(ROOTPATH . '/modules/prism_sectionhandler.php');
+use PRISM\Modules\SectionHandler;
 require_once(ROOTPATH . '/modules/prism_phpparser.php');
 
 define('HTTP_AUTH_REALM', 'Prism administration');    // Token used for http auth & digest

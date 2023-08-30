@@ -6,7 +6,7 @@
 */
 namespace PRISM;
 
-require_once(ROOTPATH . '/modules/prism_sectionhandler.php');
+use PRISM\Modules\SectionHandler;
 
 class ConfigHandler extends SectionHandler
 {

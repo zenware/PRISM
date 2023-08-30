@@ -6,6 +6,7 @@
 */
 namespace PRISM;
 
+use PRISM\Modules\SectionHandler;
 require_once(ROOTPATH . '/modules/prism_telnet_defines.php');
 require_once(ROOTPATH . '/modules/prism_telnet_server.php');
 require_once(ROOTPATH . '/modules/prism_telnet_admins.php');

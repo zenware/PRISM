@@ -6,7 +6,7 @@
 */
 namespace PRISM;
 
-require_once(ROOTPATH . '/modules/prism_sectionhandler.php');
+use PRISM\Modules\SectionHandler;
 
 // Admin Flags
 define('ADMIN_NONE',                0);            # No flags.

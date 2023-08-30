@@ -4,7 +4,7 @@
  * @package PRISM
  * @subpackage SectionHandler
 */
-namespace PRISM;
+namespace PRISM\Modules;
 
 use PRISM\Modules\IniLoader;
 

@@ -6,7 +6,7 @@
 */
 namespace PRISM;
 
-require_once(ROOTPATH . '/modules/prism_sectionhandler.php');
+use PRISM\Modules\SectionHandler;
 
 define('CONNTYPE_HOST',            0);            # object is connected directly to a host
 define('CONNTYPE_RELAY',        1);            # object is connected to host via relay

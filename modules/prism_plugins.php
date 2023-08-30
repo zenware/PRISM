@@ -6,6 +6,8 @@
 */
 namespace PRISM;
 
+use PRISM\Modules\SectionHandler;
+
 define('PRINT_CHAT',        (1 << 0));        # 1
 define('PRINT_RCM',            (1 << 1));        # 2
 define('PRINT_NUM',            (1 << 2)-1);    # 4 - 1
