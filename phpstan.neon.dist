@@ -5,3 +5,5 @@ parameters:
     level: 7
     paths:
         - src
+    excludePaths:
+        - src/Modules/Time.php

@@ -25,10 +25,14 @@ class Time
 
     /**
      * @desc: By Brad for AMX Mod X.
-     * @param: Unit - The number of time units you want translated into verbose text.
-     * @param: Type - The type of unit (i.e. seconds, minutes, hours, days, weeks) that you are passing in.
+     * @param int $unit The number of time units you want translated into verbose text.
+     * @param int $type Optional. The type of unit (i.e. seconds, minutes, hours, days, weeks) 
+     *                            that you are passing in.
+     *                            Defaults to `Time::UNIT_SECONDS`.
+     * 
+     * @return string Return
     */
-    public static function getLength($unit, $type = Time::UNIT_SECONDS)
+    public static function getLength(int $unit, int $type = Time::UNIT_SECONDS): string
     {
         # Ensure the varables are of the correct datatype.
         $unit = (int) $unit;
@@ -81,19 +85,19 @@ class Time
         $timeElement = array();
 
         if ($weeks > 0) {
-            $timeElement[] = sprintf("%i %s", $weeks, ($weeks == 1) ? "week" : "weeks");
+            $timeElement[] = sprintf("%d %s", $weeks, ($weeks == 1) ? "week" : "weeks");
         }
         if ($days > 0) {
-            $timeElement[] = sprintf("%i %s", $days, ($days == 1) ? "day" : "days");
+            $timeElement[] = sprintf("%d %s", $days, ($days == 1) ? "day" : "days");
         }
         if ($hours > 0) {
-            $timeElement[] = sprintf("%i %s", $hours, ($hours == 1) ? "hour" : "hours");
+            $timeElement[] = sprintf("%d %s", $hours, ($hours == 1) ? "hour" : "hours");
         }
         if ($minutes > 0) {
-            $timeElement[] = sprintf("%i %s", $minutes, ($minutes == 1) ? "minute" : "minutes");
+            $timeElement[] = sprintf("%d %s", $minutes, ($minutes == 1) ? "minute" : "minutes");
         }
         if ($seconds > 0) {
-            $timeElement[] = sprintf("%i %s", $seconds, ($seconds == 1) ? "second" : "seconds");
+            $timeElement[] = sprintf("%d %s", $seconds, ($seconds == 1) ? "second" : "seconds");
         }
 
         // Outputs are final result in the correct format.
