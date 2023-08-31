@@ -5,6 +5,7 @@
  * @subpackage CRON
 */
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 /**
 * Filur proving, once again, that he is a much better programmer then Dygear.
@@ -31,7 +32,7 @@ class cron
 
             $this->loadTable($this->crontab);
 #            Timers::Add('Cron', new Timer(1, -1, -1, array($this, 'tick')));
-#            console('Cron started ('.sizeof($this->jobs).' jobs)');
+#            Utils::console('Cron started ('.sizeof($this->jobs).' jobs)');
         }
         catch (Exception $e)
         {

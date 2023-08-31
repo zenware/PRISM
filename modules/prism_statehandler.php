@@ -8,6 +8,7 @@
  * @subpackage Players
 */
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 class StateHandler extends PropertyMaster
 {
@@ -154,7 +155,7 @@ class StateHandler extends PropertyMaster
         $ISP->SubT(TINY_NCN)->Send();    # get all connections (ISP_NCN)
         if(($PRISM->hosts->getHostById()->getFlags() & ISF_LOCAL) == 0) {
             #TINY_NCI is only supported in MultiPlayer
-            console('Not local; requesting TINY_NCI');
+            Utils::console('Not local; requesting TINY_NCI');
             $ISP->SubT(TINY_NCI)->Send();    # get NCI for all guests (ISP_NCN)
         }
         $ISP->SubT(TINY_NPL)->Send();    # get all players (ISP_NPL)

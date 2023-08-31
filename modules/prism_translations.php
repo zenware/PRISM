@@ -1,5 +1,6 @@
 <?php
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 class Translations extends Timers
 {
@@ -36,7 +37,7 @@ class Translations extends Timers
     protected function translateText($UCID, $messageID, $args = array(), $hostID = null)
     {
         if(!isset($this->lang_subdirectory)){
-            console('Calling plugin does not have it\'s language directory specified.');
+            Utils::console('Calling plugin does not have it\'s language directory specified.');
             return 'Calling plugin does not have it\'s language directory specified.';
         }
         $languageID = $this->getClientByUCID($UCID, $hostID)->Language;
@@ -48,8 +49,8 @@ class translateEngine {
     private static $langCache = array();
 
     public static function clearCache($lang_subdirectory){
-        console('TranslationEngine: ', false, 'red');
-        console("Clearing Cache for '{$lang_subdirectory}' plugin");
+        Utils::console('TranslationEngine: ', false, 'red');
+        Utils::console("Clearing Cache for '{$lang_subdirectory}' plugin");
         unset(self::$langCache[$lang_subdirectory]);
     }
 
@@ -67,12 +68,12 @@ class translateEngine {
 
         if(!isset(self::$langCache[$lang_subdirectory][$languageID])) 
         {
-            console('TranslationEngine: ', false, 'red');
-            console("Loading {$LANG[$languageID]} for {$lang_subdirectory}");
+            Utils::console('TranslationEngine: ', false, 'red');
+            Utils::console("Loading {$LANG[$languageID]} for {$lang_subdirectory}");
 
             $lang_folder = ROOTPATH . "/data/langs/{$lang_subdirectory}";
             if(!is_readable($lang_folder)){
-                console("Language Folder for {$lang_subdirectory} is missing or not readable.");
+                Utils::console("Language Folder for {$lang_subdirectory} is missing or not readable.");
                 return "Language Folder for {$lang_subdirectory} is missing or not readable.";
             }
             $lang_file = "{$lang_folder}/{$LANG[$languageID]}.ini";
@@ -82,9 +83,9 @@ class translateEngine {
                 $lang_file = "{$lang_folder}/{$LANG[$fallback]}.ini";
                 if(is_readable($lang_file)){
                     self::$langCache[$lang_subdirectory][$languageID] = parse_ini_file ($lang_file);
-                    console("Language File for {$LANG[$languageID]} in {$lang_subdirectory} is missing or not readable.");
+                    Utils::console("Language File for {$LANG[$languageID]} in {$lang_subdirectory} is missing or not readable.");
                 } else {
-                    console("Language File for {$LANG[$languageID]} in {$lang_subdirectory} is missing or not readable. No Fallback Available.");
+                    Utils::console("Language File for {$LANG[$languageID]} in {$lang_subdirectory} is missing or not readable. No Fallback Available.");
                     return "Language File for {$LANG[$languageID]} in {$lang_subdirectory} is missing or not readable. No Fallback Available.";
                 }
             }
@@ -93,7 +94,7 @@ class translateEngine {
         if(isset(self::$langCache[$lang_subdirectory][$languageID][$messageID])){
             return vsprintf ( self::$langCache[$lang_subdirectory][$languageID][$messageID], $args);
         } else {
-            console("Missing Language Entry: {$messageID} in {$LANG[$languageID]}");
+            Utils::console("Missing Language Entry: {$messageID} in {$LANG[$languageID]}");
             if($languageID != $fallback) {
                 return self::translate($lang_subdirectory, $fallback, $messageID, $args, $fallback);
             } else {

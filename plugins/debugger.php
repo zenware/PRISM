@@ -1,5 +1,6 @@
 <?php
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 class debugger extends Plugins
 {
@@ -72,7 +73,7 @@ class debugger extends Plugins
     {
         $this->conns[] = $this->getCurrentHostId();
         IS_MTC()->UCID(255)->Text('^6> ^7'.debugger::NAME.' ^7Has Connected.')->Send();
-        console(debugger::NAME.' Has Connected.');
+        Utils::console(debugger::NAME.' Has Connected.');
     }
 
     public function debugForceError($cmd, $ucid)

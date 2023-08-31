@@ -7,3 +7,7 @@ parameters:
         - src
     excludePaths:
         - src/Modules/Time.php
+    scanFiles:
+        - modules/prism_packets.php
+    scanDirectories:
+        - modules

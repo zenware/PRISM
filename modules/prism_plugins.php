@@ -7,6 +7,7 @@
 namespace PRISM;
 
 use PRISM\Modules\SectionHandler;
+use PRISM\Modules\Utils;
 
 define('PRINT_CHAT',        (1 << 0));        # 1
 define('PRINT_RCM',            (1 << 1));        # 2
@@ -32,13 +33,13 @@ class PluginHandler extends SectionHandler
         if ($this->loadIniFile($this->pluginvars)) {
             foreach ($this->pluginvars as $pluginID => $v) {
                 if (!is_array($v)) {
-                    console('Section error in '.$this->iniFile.' file!');
+                    Utils::console('Section error in '.$this->iniFile.' file!');
                     return false;
                 }
             }
 
             if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
-                console('Loaded '.$this->iniFile);
+                Utils::console('Loaded '.$this->iniFile);
             }
 
             // Parse useHosts values of plugins
@@ -55,7 +56,7 @@ class PluginHandler extends SectionHandler
             Interactive::queryPlugins($this->pluginvars, $PRISM->hosts->getHostsInfo());
 
             if ($this->createIniFile('PHPInSimMod Plugins', $this->pluginvars)) {
-                console('Generated config/'.$this->iniFile);
+                Utils::console('Generated config/'.$this->iniFile);
             }
 
             // Parse useHosts values of plugins
@@ -77,14 +78,14 @@ class PluginHandler extends SectionHandler
         $loadedPluginCount = 0;
 
         if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
-            console('Loading plugins');
+            Utils::console('Loading plugins');
         }
 
         $pluginPath = ROOTPATH.'/plugins';
 
-        if (($pluginFiles = get_dir_structure($pluginPath, false, '.php')) === null) {
+        if (($pluginFiles = Utils::get_dir_structure($pluginPath, false, '.php')) === null) {
             if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
-                console('No plugins found in the directory.');
+                Utils::console('No plugins found in the directory.');
             }
 
             # As we can't find any plugin files, we invalidate the the ini settings.
@@ -114,7 +115,7 @@ class PluginHandler extends SectionHandler
 
             # Load the plugin file.
             if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
-                console("Loading plugin: $pluginSection");
+                Utils::console("Loading plugin: $pluginSection");
             }
 
             include_once("$pluginPath/$pluginSection.php");
@@ -236,13 +237,13 @@ abstract class Plugins extends Translations
             if ($this->canUserAccessCommand($packet->UCID, $callback)) {
                 $this->{$callback['method']}($cmdString, $packet->UCID, $packet);
             } else {
-                console("{$this->getClientByUCID($packet->UCID)->UName} tried to access {$callback['method']}.");
+                Utils::console("{$this->getClientByUCID($packet->UCID)->UName} tried to access {$callback['method']}.");
             }
         } else if ($packet->UserType == MSO_O && ($callback = $this->getCallback($this->localCommands, $packet->Msg)) && $callback !== false) {
             if ($this->canUserAccessCommand($packet->UCID, $callback)) {
                 $this->{$callback['method']}($packet->Msg, $packet->UCID, $packet);
             } else {
-                console("{$this->getClientByUCID($packet->UCID)->UName} tried to access {$callback['method']}.");
+                Utils::console("{$this->getClientByUCID($packet->UCID)->UName} tried to access {$callback['method']}.");
             }
         }
     }
@@ -254,7 +255,7 @@ abstract class Plugins extends Translations
             if ($this->canUserAccessCommand($packet->UCID, $callback)) {
                 $this->{$callback['method']}($packet->Msg, $packet->UCID, $packet);
             } else {
-                console("{$this->getClientByUCID($packet->UCID)->UName} tried to access {$callback['method']}.");
+                Utils::console("{$this->getClientByUCID($packet->UCID)->UName} tried to access {$callback['method']}.");
             }
         }
     }

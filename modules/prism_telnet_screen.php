@@ -5,6 +5,7 @@
  * @subpackage Telnet
 */
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 // Screen object options
 define('TS_OPT_ISSELECTABLE', 1);
@@ -689,7 +690,7 @@ class TSTextArea extends ScreenObject
 
         }
 
-        //console('object width : '.$this->realWidth.' | object height : '.$this->realHeight);
+        //Utils::console('object width : '.$this->realWidth.' | object height : '.$this->realHeight);
 
         $this->screenCache = $screenBuf;
         return $screenBuf;
@@ -883,12 +884,12 @@ abstract class TSSection extends ScreenContainer
                 else
                     $this->parentSection->setPostCurPos(array());
             }
-//            console('Recursive : found final parent');
+//            Utils::console('Recursive : found final parent');
         }
         else
         {
             $this->parentSection->setInputCallback($class, $func, $editMode, $curPos, $defaultText, $maxLength);
-//            console('Recursive : continuing up');
+//            Utils::console('Recursive : continuing up');
         }
     }
 
@@ -913,14 +914,14 @@ abstract class TSSection extends ScreenContainer
         if ($active)
         {
             $this->getCurObject()->setSelected(true);
-//            console('ACTIVATING '.$this->getCurObject()->getId());
+//            Utils::console('ACTIVATING '.$this->getCurObject()->getId());
             $this->setInputMode();
         }
         else
         {
             $this->getCurObject()->setSelected(false);
             $this->setInputCallback(null);
-//            console('DE-ACTIVATING'.$this->getCurObject()->getId());
+//            Utils::console('DE-ACTIVATING'.$this->getCurObject()->getId());
         }
     }
 

@@ -31,7 +31,7 @@ define('ROOTPATH', dirname(dirname(realpath(__FILE__))));
 
 // the REQUIRED modules for PRISM.
 use PRISM\Modules;
-require_once(ROOTPATH . '/modules/prism_functions.php');
+use PRISM\Modules\Utils;
 require_once(ROOTPATH . '/modules/prism_packets.php');
 require_once(ROOTPATH . '/modules/prism_hosts.php');
 require_once(ROOTPATH . '/modules/prism_statehandler.php');
@@ -113,10 +113,10 @@ class PHPInSimMod
             $this->isWindows = true;
 
         $this->config    = new Modules\ConfigHandler();
-        $this->hosts    = new HostHandler();
-        $this->plugins    = new PluginHandler();
-        $this->http        = new HttpHandler();
-        $this->telnet    = new TelnetHandler();
+        $this->hosts    = new \PRISM\HostHandler();
+        $this->plugins    = new \PRISM\PluginHandler();
+        $this->http        = new \PRISM\HttpHandler();
+        $this->telnet    = new \PRISM\TelnetHandler();
         $this->admins    = new Modules\AdminHandler();
     }
 
@@ -156,7 +156,7 @@ class PHPInSimMod
         foreach ($trace as $index => $call) {
             if ($call['function'] == 'main') break;
             if ($index > 0 AND isset($call['file']) AND isset($call['line'])) {
-                console("\t".$index.' :: '.$call['function'].' in '.$call['file'].':'.$call['line']);
+                Utils::console("\t".$index.' :: '.$call['function'].' in '.$call['file'].':'.$call['line']);
             }
         }
 
@@ -188,7 +188,7 @@ class PHPInSimMod
             !$this->admins->initialise() OR
             !$this->plugins->initialise())
         {
-            console('Fatal error encountered. Exiting...');
+            Utils::console('Fatal error encountered. Exiting...');
             exit(1);
         }
 
@@ -196,11 +196,11 @@ class PHPInSimMod
 
         if ($this->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
             if ($pluginsLoaded == 0)
-                console('No Plugins Loaded');
+                Utils::console('No Plugins Loaded');
             else if ($pluginsLoaded == 1)
-                console('One Plugin Loaded');
+                Utils::console('One Plugin Loaded');
             else
-                console("{$pluginsLoaded} Plugins Loaded.");
+                Utils::console("{$pluginsLoaded} Plugins Loaded.");
         }
     }
 
@@ -257,32 +257,32 @@ class PHPInSimMod
                     // Process the command (the first char or word of the line)
                     switch ($exp[0]) {
                         case 'c':
-                            console(sprintf('%32s - %64s', 'COMMAND', 'DESCRIPTION'));
+                            Utils::console(sprintf('%32s - %64s', 'COMMAND', 'DESCRIPTION'));
                             foreach ($this->plugins->getPlugins() as $plugin => $details) {
                                 foreach ($details->sayCommands as $command => $detail) {
-                                    console(sprintf('%32s - %64s', $command, $detail['info']));
+                                    Utils::console(sprintf('%32s - %64s', $command, $detail['info']));
                                 }
                             }
 
                             break;
                         case 'h':
-                            console(sprintf('%14s %28s:%-5s %8s %22s', 'Host ID', 'IP', 'PORT', 'UDPPORT', 'STATUS'));
+                            Utils::console(sprintf('%14s %28s:%-5s %8s %22s', 'Host ID', 'IP', 'PORT', 'UDPPORT', 'STATUS'));
                             foreach ($this->hosts->getHostsInfo() as $host) {
                                 $status = (($host['connStatus'] == CONN_CONNECTED) ? '' : (($host['connStatus'] == CONN_VERIFIED) ? 'VERIFIED &' : ' NOT')).' CONNECTED';
                                 $socketType = (($host['socketType'] == SOCKTYPE_TCP) ? 'tcp://' : 'udp://');
-                                console(sprintf('%14s %28s:%-5s %8s %22s', $host['id'], $socketType.$host['ip'], $host['port'], $host['udpPort'], $status));
+                                Utils::console(sprintf('%14s %28s:%-5s %8s %22s', $host['id'], $socketType.$host['ip'], $host['port'], $host['udpPort'], $status));
                             }
                             break;
 
                         case 'I':
-                            console('RE-INITIALISING PRISM...');
+                            Utils::console('RE-INITIALISING PRISM...');
                             $this->initialise(null, null);
                             break;
 
                         case 'p':
-                            console(sprintf('%28s %8s %24s %64s', 'NAME', 'VERSION', 'AUTHOR', 'DESCRIPTION'));
+                            Utils::console(sprintf('%28s %8s %24s %64s', 'NAME', 'VERSION', 'AUTHOR', 'DESCRIPTION'));
                             foreach ($this->plugins->getPlugins() as $plugin => $details) {
-                                console(sprintf("%28s %8s %24s %64s", $plugin::NAME, $plugin::VERSION, $plugin::AUTHOR, $plugin::DESCRIPTION));
+                                Utils::console(sprintf("%28s %8s %24s %64s", $plugin::NAME, $plugin::VERSION, $plugin::AUTHOR, $plugin::DESCRIPTION));
                             }
                             break;
 
@@ -291,22 +291,22 @@ class PHPInSimMod
                             break;
 
                         case 'w':
-                            console(sprintf('%15s:%5s %5s', 'IP', 'PORT', 'LAST ACTIVITY'));
+                            Utils::console(sprintf('%15s:%5s %5s', 'IP', 'PORT', 'LAST ACTIVITY'));
                             foreach ($this->http->getHttpInfo() as $v) {
                                 $lastAct = time() - $v['lastActivity'];
-                                console(sprintf('%15s:%5s %13d', $v['ip'], $v['port'], $lastAct));
+                                Utils::console(sprintf('%15s:%5s %13d', $v['ip'], $v['port'], $lastAct));
                             }
-                            console('Counted '.$this->http->getHttpNumClients().' http client'.(($this->http->getHttpNumClients() == 1) ? '' : 's'));
+                            Utils::console('Counted '.$this->http->getHttpNumClients().' http client'.(($this->http->getHttpNumClients() == 1) ? '' : 's'));
                             break;
 
                         default :
-                            console('Available Commands:');
-                            console('    h - show host info');
-                            console('    I - re-initialise PRISM (reload ini files / reconnect to hosts / reset http socket');
-                            console('    p - show plugin info');
-                            console('    x - exit PHPInSimMod');
-                            console('    w - show www connections');
-                            console('    c - show command list');
+                            Utils::console('Available Commands:');
+                            Utils::console('    h - show host info');
+                            Utils::console('    I - re-initialise PRISM (reload ini files / reconnect to hosts / reset http socket');
+                            Utils::console('    p - show plugin info');
+                            Utils::console('    x - exit PHPInSimMod');
+                            Utils::console('    w - show www connections');
+                            Utils::console('    c - show command list');
                     }
                 }
 
@@ -352,6 +352,6 @@ class PHPInSimMod
 
     public function __destruct()
     {
-        console('Safe shutdown: ' . date($this->config->cvars['logFormat']));
+        Utils::console('Safe shutdown: ' . date($this->config->cvars['logFormat']));
     }
 }

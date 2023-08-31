@@ -6,6 +6,7 @@
 */
 
 namespace PRISM\Modules;
+use PRISM\Modules\Utils;
 
 /**
  * protected IniLoader methods (to be extended by other classes, like the section handlers)
@@ -27,11 +28,11 @@ abstract class IniLoader
         $iniPath = ROOTPATH . '/configs/'.$this->iniFile;
 
         if (!file_exists($iniPath)) {
-            console('Could not find ini file "'.$this->iniFile.'"');
+            Utils::console('Could not find ini file "'.$this->iniFile.'"');
             return false;
         }
         if (($iniVARs = parse_ini_file($iniPath, $parseSections)) === false) {
-            console('Could not parse ini file "'.$this->iniFile.'"');
+            Utils::console('Could not parse ini file "'.$this->iniFile.'"');
             return false;
         }
 

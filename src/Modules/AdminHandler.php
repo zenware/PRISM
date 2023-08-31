@@ -5,6 +5,7 @@
  * @subpackage Admin
 */
 namespace PRISM\Modules;
+use PRISM\Modules\Utils;
 
 // Admin Flags
 define('ADMIN_NONE',                0);            # No flags.
@@ -70,7 +71,7 @@ class AdminHandler extends SectionHandler
 
         if ($this->loadIniFile($this->admins)) {
             if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
-                \PRISM\console('Loaded '.$this->iniFile);
+                Utils::console('Loaded '.$this->iniFile);
             }
         } else {
             # We ask the client to manually input the user details here.
@@ -123,7 +124,7 @@ class AdminHandler extends SectionHandler
 
 ININOTES;
             if ($this->createIniFile('Admins Configuration File', $this->admins, $extraInfo)) {
-                \PRISM\console('Generated config/'.$this->iniFile);
+                Utils::console('Generated config/'.$this->iniFile);
             }
         }
 
@@ -142,9 +143,12 @@ ININOTES;
 
             // Convert flags?
             if (!is_numeric($details['accessFlags'])) {
-                $details['accessFlags'] = \PRISM\flagsToInteger($details['accessFlags']);
+                $details['accessFlags'] = Utils::flagsToInteger($details['accessFlags']);
             } else {
-                $this->rewriteLine($username, 'accessFlags', flagsToString($details['accessFlags']));
+                // TODO: Refactor this into an object with typed properties.
+                // PHPStan has issues resolving the type of data accessed by keys, e.g. $details['accessFlags']
+                // @phpstan-ignore-next-line
+                $this->rewriteLine($username, 'accessFlags', Utils::flagsToString($details['accessFlags']));
             }
         }
 
@@ -284,7 +288,7 @@ ININOTES;
         $username = strToLower($username);
         global $PRISM;
 
-        \PRISM\console('Writing new password for '.$username);
+        Utils::console('Writing new password for '.$username);
 
         if (!isset($this->admins[$username])) {
             return false;
@@ -316,7 +320,7 @@ ININOTES;
 
         // Rewrite accessFlags line for user in admins.ini
         if ($store) {
-            $this->rewriteLine($username, 'accessFlags', flagsToString($this->admins[$username]['accessFlags']));
+            $this->rewriteLine($username, 'accessFlags', Utils::flagsToString($this->admins[$username]['accessFlags']));
         }
 
         return true;
@@ -335,7 +339,7 @@ ININOTES;
 
         // Rewrite accessFlags line for user in admins.ini
         if ($store) {
-            $this->rewriteLine($username, 'accessFlags', flagsToString($this->admins[$username]['accessFlags']));
+            $this->rewriteLine($username, 'accessFlags', Utils::flagsToString($this->admins[$username]['accessFlags']));
         }
 
         return true;
@@ -354,7 +358,7 @@ ININOTES;
 
         // Rewrite accessFlags line for user in admins.ini
         if ($store) {
-            $this->rewriteLine($username, 'accessFlags', flagsToString($this->admins[$username]['accessFlags']));
+            $this->rewriteLine($username, 'accessFlags', Utils::flagsToString($this->admins[$username]['accessFlags']));
         }
 
         return true;

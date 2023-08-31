@@ -1,5 +1,6 @@
 <?php
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 /**
  * Overwriting some methods. Should probably be merged into ISP_BTN.
@@ -87,17 +88,17 @@ class Button extends IS_BTN
 
     public function UCID($val)
     {
-        console("ERROR: UCID may only be set in constructor!");
+        Utils::console("ERROR: UCID may only be set in constructor!");
         return $this;
     }
     public function ReqI($val)
     {
-        console("ERROR: Do not set ReqI manually!");
+        Utils::console("ERROR: Do not set ReqI manually!");
         return $this;
     }
     public function ClickID($val)
     {
-        console("ERROR: Do not set ClickID manually!");
+        Utils::console("ERROR: Do not set ClickID manually!");
         return $this;
     }
     public function key()

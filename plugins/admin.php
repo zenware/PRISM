@@ -1,6 +1,8 @@
 <?php
 namespace PRISM;
 
+use PRISM\Modules\Utils;
+
 class admin extends Plugins
 {
 	const URL = 'http://lfsforum.net/forumdisplay.php?f=312';
@@ -196,19 +198,11 @@ class admin extends Plugins
 			$MTC->Text('Usage: `prism plugins load <plugin>`')->Send();
 			$MTC->Text('Loads plugin(s) at runtime.')->Send();
 			
-			$PluginsAll = get_dir_structure(PHPInSimMod::ROOTPATH . '/plugins/');
+			$PluginsAll = Utils::get_dir_structure(PHPInSimMod::ROOTPATH . '/plugins/');
 			$PluginsLoaded = array_keys($PRISM->plugins->getPlugins());
 			$PluginsNotloaded = array_diff($PluginsAll, $PluginsLoaded);
 
 			var_dump($PluginsAvailable, $PluginsLoaded, $PluginsNotloaded);
-
-/*			foreach ($PluginsNotloaded as $Plugin)
-			{
-				if (validatePHPFile(PHPInSimMod::ROOTPATH . '/plugins/' . $Plugins . '.php'))
-					#Plugin Is Sane, Color Should be GREEN.
-				else
-					#Plugin Not Sname, Color Should be RED.
-			} */
 		}
 
 		#Load Plugins

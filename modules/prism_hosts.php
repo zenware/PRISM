@@ -7,6 +7,7 @@
 namespace PRISM;
 
 use PRISM\Modules\SectionHandler;
+use PRISM\Modules\Utils;
 
 define('CONNTYPE_HOST',            0);            # object is connected directly to a host
 define('CONNTYPE_RELAY',        1);            # object is connected to host via relay
@@ -67,12 +68,12 @@ class HostHandler extends SectionHandler
             {
                 if (!is_array($v))
                 {
-                    console('Section error in '.$this->iniFile.' file!');
+                    Utils::console('Section error in '.$this->iniFile.' file!');
                     return FALSE;
                 }
             }
             if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE)
-                console('Loaded '.$this->iniFile);
+                Utils::console('Loaded '.$this->iniFile);
         }
         else
         {
@@ -82,7 +83,7 @@ class HostHandler extends SectionHandler
 
             # Then build a connections.ini file based on these details provided.
             if ($this->createIniFile('InSim Connection Hosts', $this->connvars))
-                console('Generated config/'.$this->iniFile);
+                Utils::console('Generated config/'.$this->iniFile);
         }
 
         // Cleanup any existing connections (in case of re-initialise)
@@ -146,32 +147,32 @@ class HostHandler extends SectionHandler
                 // Some value checking
                 if ($port < 1 || $port > 65535)
                 {
-                    console('Invalid port '.$port.' for '.$hostID);
-                    console('Host '.$hostID.' will be excluded.');
+                    Utils::console('Invalid port '.$port.' for '.$hostID);
+                    Utils::console('Host '.$hostID.' will be excluded.');
                     continue;
                 }
                 if ($udpPort < 0 || $udpPort > 65535)
                 {
-                    console('Invalid UDP port '.$udpPort.' for '.$hostID);
-                    console('Falling back to TCP.');
+                    Utils::console('Invalid UDP port '.$udpPort.' for '.$hostID);
+                    Utils::console('Falling back to TCP.');
                     $udpPort = 0;
                 }
                 if ($outgaugePort < 0 || $outgaugePort > 65535)
                 {
-                    console('Invalid OutGauge port '.$outgaugePort.' for '.$hostID);
-                    console('Outgauge will not work for host '.$hostID.'.');
+                    Utils::console('Invalid OutGauge port '.$outgaugePort.' for '.$hostID);
+                    Utils::console('Outgauge will not work for host '.$hostID.'.');
                     $outgaugePort = 0;
                 }
                 if ($pps < 1 || $pps > 100)
                 {
-                    console('Invalid pps '.$pps.' for '.$hostID);
-                    console('Host '.$hostID.' will be excluded.');
+                    Utils::console('Invalid pps '.$pps.' for '.$hostID);
+                    Utils::console('Host '.$hostID.' will be excluded.');
                     continue;
                 }
                 if ($socketType != SOCKTYPE_TCP && $socketType != SOCKTYPE_UDP)
                 {
-                    console('Invalid socket type set for '.$ip.':'.$port);
-                    console('Host '.$hostID.' will be excluded.');
+                    Utils::console('Invalid socket type set for '.$ip.':'.$port);
+                    Utils::console('Host '.$hostID.' will be excluded.');
                     continue;
                 }
 
@@ -195,7 +196,7 @@ class HostHandler extends SectionHandler
                 {
                     if (in_array($ic->getUdpPort(), $udpPortBuf))
                     {
-                        console('Duplicate udpPort value found! Every host must have its own unique udpPort. Not using additional port for this host.');
+                        Utils::console('Duplicate udpPort value found! Every host must have its own unique udpPort. Not using additional port for this host.');
                         $ic->setUdpPort(0);
                     }
                     else
@@ -203,7 +204,7 @@ class HostHandler extends SectionHandler
                         $udpPortBuf[] = $ic->getUdpPort();
                         if (!$ic->createMCISocket())
                         {
-                            console('Host '.$hostID.' will be excluded.');
+                            Utils::console('Host '.$hostID.' will be excluded.');
                             continue;
                         }
                     }
@@ -213,7 +214,7 @@ class HostHandler extends SectionHandler
                 {
                     if (in_array($ic->getOutgaugePort(), $udpPortBuf))
                     {
-                        console('Duplicate outgaugePort value found! Every host must have its own unique outgaugePort. Not listening for OutGauge packets from host '.$hostID.'.');
+                        Utils::console('Duplicate outgaugePort value found! Every host must have its own unique outgaugePort. Not listening for OutGauge packets from host '.$hostID.'.');
                         $ic->setOutgaugePort(0);
                     }
                     else
@@ -221,7 +222,7 @@ class HostHandler extends SectionHandler
                         $udpPortBuf[] = $ic->getOutgaugePort();
                         if (!$ic->createOutgaugeSocket())
                         {
-                            console('Not listening for OutGauge packets from host '.$hostID.'.');
+                            Utils::console('Not listening for OutGauge packets from host '.$hostID.'.');
                             $ic->setOutgaugePort(0);
                         }
                     }
@@ -345,7 +346,7 @@ class HostHandler extends SectionHandler
                         // TCP Stream requires buffering
                         $host->appendToBuffer($data);
                         while (true) {
-                            //console('findloop');
+                            //Utils::console('findloop');
                             $packet = $host->findNextPacket();
                             if (!$packet)
                                 break;
@@ -365,7 +366,7 @@ class HostHandler extends SectionHandler
                 $peerInfo = '';
                 $data = $host->readMCI($peerInfo);
                 $exp = explode(':', $peerInfo);
-                console('received '.strlen($data).' bytes on second socket');
+                Utils::console('received '.strlen($data).' bytes on second socket');
 
                 // Only process the packet if it came from the host's IP.
                 if ($host->getConnectIP() == $exp[0])
@@ -380,7 +381,7 @@ class HostHandler extends SectionHandler
                 $peerInfo = '';
                 $data = $host->readOutgauge($peerInfo);
                 $exp = explode(':', $peerInfo);
-                //console('received '.strlen($data).' bytes on outgauge socket');
+                //Utils::console('received '.strlen($data).' bytes on outgauge socket');
 
                 // Only process the packet if it came from the host's IP.
                 if ($host->getConnectIP() == $exp[0])
@@ -413,7 +414,7 @@ class HostHandler extends SectionHandler
                 // Check to see if a connection attempt is going to time out.
                 if ($host->getConnTime() < time() - CONN_TIMEOUT)
                 {
-                    console('Connection attempt to '.$host->getIP().':'.$host->getPort().' timed out');
+                    Utils::console('Connection attempt to '.$host->getIP().':'.$host->getPort().' timed out');
                     $host->close();
                 }
                 continue;
@@ -422,7 +423,7 @@ class HostHandler extends SectionHandler
             // Does the connection appear to be dead? (LFS host not sending anything for more than HOST_TIMEOUT seconds
             if ($host->getLastReadTime() < time () - HOST_TIMEOUT)
             {
-                console('Host '.$host->getIP().':'.$host->getPort().' timed out');
+                Utils::console('Host '.$host->getIP().':'.$host->getPort().' timed out');
                 $host->close();
             }
 
@@ -438,7 +439,7 @@ class HostHandler extends SectionHandler
         // Are all hosts dead?
         if ($c == $d)
         {
-            console('We cannot seem to successfully connect to any hosts. Exiting');
+            Utils::console('We cannot seem to successfully connect to any hosts. Exiting');
             return false;
         }
         return true;
@@ -452,7 +453,7 @@ class HostHandler extends SectionHandler
         if ((strlen($rawPacket) % 4) > 0)
         {
             // Packet size is not a multiple of 4
-            console('WARNING : packet with invalid size ('.strlen($rawPacket).') from '.$hostID);
+            Utils::console('WARNING : packet with invalid size ('.strlen($rawPacket).') from '.$hostID);
 
             // Let's clear the buffer to be sure, because remaining data cannot be trusted at this point.
             $this->hosts[$hostID]->clearBuffer();
@@ -475,13 +476,13 @@ class HostHandler extends SectionHandler
                 switch ($pH['Type'])
                 {
                     case ISP_TINY:
-                        console("< {$TINY[$pH['SubT']]} Packet from {$hostID}.");
+                        Utils::console("< {$TINY[$pH['SubT']]} Packet from {$hostID}.");
                     break;
                     case ISP_SMALL:
-                        console("< {$SMALL[$pH['SubT']]} Packet from {$hostID}.");
+                        Utils::console("< {$SMALL[$pH['SubT']]} Packet from {$hostID}.");
                     break;
                     default:
-                        console("< {$TYPEs[$pH['Type']]} Packet from {$hostID}.");
+                        Utils::console("< {$TYPEs[$pH['Type']]} Packet from {$hostID}.");
                 }
             }
             $packet = new $TYPEs[$pH['Type']]($rawPacket);
@@ -489,7 +490,7 @@ class HostHandler extends SectionHandler
         }
         else
         {
-            console("Unknown Type Byte of {$pH['Type']}, with reported size of {$pH['Size']} Bytes and actual size of " . strlen($rawPacket) . ' Bytes.');
+            Utils::console("Unknown Type Byte of {$pH['Type']}, with reported size of {$pH['Size']} Bytes and actual size of " . strlen($rawPacket) . ' Bytes.');
         }
     }
 
@@ -499,7 +500,7 @@ class HostHandler extends SectionHandler
         $packetLen = strlen($rawPacket);
 
         if ($packetLen != OutGaugePack::LENGTH AND $packetLen != OutGaugePack::LENGTH + 4) {
-            return console("WARNING : outgauge packet of invalid size ({$packetLen})");
+            return Utils::console("WARNING : outgauge packet of invalid size ({$packetLen})");
         }
 
         # Parse packet
@@ -536,31 +537,31 @@ class HostHandler extends SectionHandler
                 switch($packet->ErrNo)
                 {
                     case IR_ERR_PACKET :
-                        console('Invalid packet sent by client (wrong structure / length)');
+                        Utils::console('Invalid packet sent by client (wrong structure / length)');
                         break;
 
                     case IR_ERR_PACKET2 :
-                        console('Invalid packet sent by client (packet was not allowed to be forwarded to host)');
+                        Utils::console('Invalid packet sent by client (packet was not allowed to be forwarded to host)');
                         break;
 
                     case IR_ERR_HOSTNAME :
-                        console('Wrong hostname given by client');
+                        Utils::console('Wrong hostname given by client');
                         break;
 
                     case IR_ERR_ADMIN :
-                        console('Wrong admin pass given by client');
+                        Utils::console('Wrong admin pass given by client');
                         break;
 
                     case IR_ERR_SPEC :
-                        console('Wrong spec pass given by client');
+                        Utils::console('Wrong spec pass given by client');
                         break;
 
                     case IR_ERR_NOSPEC :
-                        console('Spectator pass required, but none given');
+                        Utils::console('Spectator pass required, but none given');
                         break;
 
                     default :
-                        console('Unknown error received from relay ('.$packet->ErrNo.')');
+                        Utils::console('Unknown error received from relay ('.$packet->ErrNo.')');
                         break;
                 }
 
@@ -635,13 +636,13 @@ class HostHandler extends SectionHandler
             switch ($packetClass->Type)
             {
                 case ISP_TINY:
-                    console("> {$TINY[$packetClass->SubT]} Packet to {$hostId}.");
+                    Utils::console("> {$TINY[$packetClass->SubT]} Packet to {$hostId}.");
                 break;
                 case ISP_SMALL:
-                    console("> {$SMALL[$packetClass->SubT]} Packet to {$hostId}.");
+                    Utils::console("> {$SMALL[$packetClass->SubT]} Packet to {$hostId}.");
                 break;
                 default:
-                    console("> {$TYPEs[$packetClass->Type]} Packet to {$hostId}.");
+                    Utils::console("> {$TYPEs[$packetClass->Type]} Packet to {$hostId}.");
             }
         }
 
@@ -921,10 +922,10 @@ class InsimConnection
         $this->close(FALSE, TRUE);
 
         // Figure out the proper IP address. We do this every time we connect in case of dynamic IP addresses.
-        $this->connectIP = getIP($this->ip);
+        $this->connectIP = Utils::getIP($this->ip);
         if (!$this->connectIP)
         {
-            console('Cannot connect to host, Invalid IP : '.$this->ip.':'.$this->port);
+            Utils::console('Cannot connect to host, Invalid IP : '.$this->ip.':'.$this->port);
             $this->socket        = NULL;
             $this->connStatus    = CONN_NOTCONNECTED;
             $this->mustConnect    = -1;                    // Something completely failed - we will no longer try this connection
@@ -955,7 +956,7 @@ class InsimConnection
         // We set the connection time here, so we can track how long we're trying to connect
         $this->connTime = time();
 
-        console('Connecting to '.$this->ip.':'.$this->port.' ... #'.($this->connTries + 1));
+        Utils::console('Connecting to '.$this->ip.':'.$this->port.' ... #'.($this->connTries + 1));
         $this->connectFinish();
         $this->lastReadTime = time() - HOST_TIMEOUT + 10;
 
@@ -989,7 +990,7 @@ class InsimConnection
 
         stream_set_blocking($this->socket, 0);
 
-        console('Connecting to '.$this->ip.':'.$this->port.' ... #'.($this->connTries + 1));
+        Utils::console('Connecting to '.$this->ip.':'.$this->port.' ... #'.($this->connTries + 1));
 
         return TRUE;
     }
@@ -1028,7 +1029,7 @@ class InsimConnection
             $this->close(TRUE);
         }
 
-        console('Connected to '.$this->ip.':'.$this->port);
+        Utils::console('Connected to '.$this->ip.':'.$this->port);
     }
 
     public function createMCISocket()
@@ -1046,7 +1047,7 @@ class InsimConnection
             return FALSE;
         }
 
-        console('Listening for NLP/MCI on secondary UDP port '.$this->udpPort);
+        Utils::console('Listening for NLP/MCI on secondary UDP port '.$this->udpPort);
 
         return TRUE;
     }
@@ -1073,7 +1074,7 @@ class InsimConnection
             return FALSE;
         }
 
-        console('Listening for OutGauge packets on UDP port '.$this->outgaugePort);
+        Utils::console('Listening for OutGauge packets on UDP port '.$this->outgaugePort);
 
         return TRUE;
     }
@@ -1101,7 +1102,7 @@ class InsimConnection
             }
 
             fclose($this->socket);
-            console('Closed connection to '.$this->ip.':'.$this->port);
+            Utils::console('Closed connection to '.$this->ip.':'.$this->port);
         }
 
         // (re)set some variables.
@@ -1121,7 +1122,7 @@ class InsimConnection
                 $this->mustConnect = time() + HOST_RECONN_TIMEOUT;
             else
             {
-                console('Cannot seem to connect to '.$this->ip.':'.$this->port.' - giving up ...');
+                Utils::console('Cannot seem to connect to '.$this->ip.':'.$this->port.' - giving up ...');
                 $this->mustConnect = -1;
             }
         }
@@ -1141,7 +1142,7 @@ class InsimConnection
     {
         $this->lastWriteTime = time();
         if (($bytes = @fwrite($this->socket, $data)) === FALSE)
-            console('UDP: Error sending packet through socket.');
+            Utils::console('UDP: Error sending packet through socket.');
         return $bytes;
     }
 
@@ -1157,7 +1158,7 @@ class InsimConnection
             // This packet came from the sendQ. We just try to send this and don't bother too much about error checking.
             // That's done from the sendQ flushing code.
             if (($bytes = @fwrite($this->socket, $data)) === FALSE)
-                console('TCP: Error sending packet through socket.');
+                Utils::console('TCP: Error sending packet through socket.');
         }
         else
         {
@@ -1165,7 +1166,7 @@ class InsimConnection
             {
                 // It's Ok to send packet
                 if (($bytes = @fwrite($this->socket, $data)) === FALSE)
-                    console('TCP: Error sending packet through socket.');
+                    Utils::console('TCP: Error sending packet through socket.');
                 $this->lastWriteTime = time();
 
                 if (!$bytes || $bytes != strlen($data))
@@ -1217,7 +1218,7 @@ class InsimConnection
 
         if ($bytes > 0)
             $this->lastWriteTime    = time();
-        //console('Bytes sent : '.$bytes.' - Bytes left : '.$this->sendQLen.' - '.$this->ip);
+        //Utils::console('Bytes sent : '.$bytes.' - Bytes left : '.$this->sendQLen.' - '.$this->ip);
     }
 
     private function sendQReset()
@@ -1272,7 +1273,7 @@ class InsimConnection
         }
         else if ($this->streamBufLen < $sizebyte)
         {
-            //console('Split packet ...');
+            //Utils::console('Split packet ...');
             return FALSE;
         }
 

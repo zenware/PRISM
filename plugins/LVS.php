@@ -1,5 +1,6 @@
 <?php
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 class LVS extends Plugins
 {
@@ -40,12 +41,12 @@ class LVS extends Plugins
 
 		$path = ROOTPATH . $this::PATH . $this->Track . '.pth';
 
-		console($path);
+		Utils::console($path);
 
 		if (!file_exists($path))
 			return $this->pth = NULL; # We don't have a PTH file for this track.
 
-		console("Loaded {$this->Track}.pth");
+		Utils::console("Loaded {$this->Track}.pth");
 
 		return PLUGIN_CONTINUE;
 	}
@@ -67,7 +68,7 @@ class LVS extends Plugins
 
 		$this->pth = new PTH($path);
 
-		console("Loaded {$this->Track}.pth");
+		Utils::console("Loaded {$this->Track}.pth");
 
 		return PLUGIN_CONTINUE;
 	}

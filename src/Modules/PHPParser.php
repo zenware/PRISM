@@ -5,6 +5,7 @@
  * @subpackage PHPParser
 */
 namespace PRISM\Modules;
+use PRISM\Modules\Utils;
 
 define('PRISM_SESSION_TIMEOUT', 900);        // how long a session is valid
 
@@ -40,7 +41,9 @@ class PHPParser
             ob_end_clean();
         } else {
             // Validate the php file
-            $parseResult = validatePHPFile($PRISM->http->getDocRoot().$file);
+            // TODO: This needs to be removed.
+            // PHP Files should be validated at writing time, not during runtime.
+            $parseResult = Utils::validatePHPFile($PRISM->http->getDocRoot().$file);
             if ($parseResult[0]) {
                 // Run the script from disk
                 $prismPhpScript = preg_replace(array('/^<\?(php)?/', '/\?>$/'), '', file_get_contents($PRISM->http->getDocRoot().$file));
@@ -66,7 +69,7 @@ class PHPParser
 
         // Should we store the session?
         if (isset($_SESSION) && $_SESSION != '') {
-            $sessionID = sha1(createRandomString(128, RAND_BINARY).time());
+            $sessionID = sha1(Utils::createRandomString(128, RAND_BINARY).time());
             self::$sessions[$sessionID] = array(time() + PRISM_SESSION_TIMEOUT, $SERVER['REMOTE_ADDR'], $_SESSION);
             $RESPONSE->setCookie('PrismSession', $sessionID, time() + PRISM_SESSION_TIMEOUT, '/', $SERVER['SERVER_NAME']);
         } else if (isset($COOKIE['PrismSession'])) {

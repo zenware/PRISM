@@ -5,6 +5,7 @@
  * @subpackage Telnet
 */
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 require_once(ROOTPATH . '/modules/prism_telnet_screen.php');
 
@@ -120,7 +121,7 @@ class TelnetServer extends TelnetScreen
         else
         {
             $this->inputCallback = array($class, $func);
-//            console('SETTING CALLBACK FUNCTION : '.$func);
+//            Utils::console('SETTING CALLBACK FUNCTION : '.$func);
         }
 
         if ($editMode == 0)
@@ -182,33 +183,33 @@ class TelnetServer extends TelnetScreen
                         switch($this->inputBuffer[$a+1])
                         {
                             case TELNET_OPT_BINARY :
-                                //console('client WILL BINARY');
+                                //Utils::console('client WILL BINARY');
                                 $this->modeState |= TELNET_MODE_BINARY;
                                 break;
                             case TELNET_OPT_SGA :
-                                //console('client WILL SGA');
+                                //Utils::console('client WILL SGA');
                                 $this->modeState |= TELNET_MODE_SGA;
                                 break;
                             case TELNET_OPT_LINEMODE :
-                                //console('client WILL Linemode');
+                                //Utils::console('client WILL Linemode');
                                 $this->modeState |= TELNET_MODE_LINEMODE;
                                 break;
                             case TELNET_OPT_NAWS :
-                                //console('client WILL NAWS');
+                                //Utils::console('client WILL NAWS');
                                 $this->modeState |= TELNET_MODE_NAWS;
                                 break;
                             case TELNET_OPT_TERMINAL_SPEED :
-                                //console('client WILL terminal speed');
+                                //Utils::console('client WILL terminal speed');
                                 $this->modeState |= TELNET_MODE_TERMINAL_SPEED;
                                 $this->setTelnetOption(TELNET_ACTION_DONT, TELNET_OPT_TERMINAL_SPEED);
                                 break;
                             case TELNET_OPT_TTYPE :
-                                //console('client WILL TTYPE');
+                                //Utils::console('client WILL TTYPE');
                                 $this->write(TELNET_IAC.TELNET_OPT_SB.TELNET_OPT_TTYPE.chr(1).TELNET_IAC.TELNET_OPT_SE);
                                 //$this->modeState |= TELNET_MODE_NAWS;
                                 break;
                             case TELNET_OPT_NEW_ENVIRON :
-                                //console('client WILL NEW-ENVIRON');
+                                //Utils::console('client WILL NEW-ENVIRON');
                                 $this->modeState |= TELNET_MODE_NEW_ENVIRON;
                                 $this->setTelnetOption(TELNET_ACTION_DO, TELNET_OPT_NEW_ENVIRON);
                                 $this->write(TELNET_IAC.TELNET_OPT_SB.TELNET_OPT_NEW_ENVIRON.chr(1).TELNET_IAC.TELNET_OPT_SE);
@@ -221,31 +222,31 @@ class TelnetServer extends TelnetScreen
                         switch($this->inputBuffer[$a+1])
                         {
                             case TELNET_OPT_BINARY :
-                                //console('client WON\'T BINERY');
+                                //Utils::console('client WON\'T BINERY');
                                 $this->modeState &= ~TELNET_MODE_BINARY;
                                 break;
                             case TELNET_OPT_SGA :
-                                //console('client WON\'T SGA');
+                                //Utils::console('client WON\'T SGA');
                                 $this->modeState &= ~TELNET_MODE_SGA;
                                 break;
                             case TELNET_OPT_LINEMODE :
-                                //console('client WON\'T Linemode');
+                                //Utils::console('client WON\'T Linemode');
                                 $this->modeState &= ~TELNET_MODE_LINEMODE;
                                 break;
                             case TELNET_OPT_NAWS :
-                                //console('client WON\'T NAWS');
+                                //Utils::console('client WON\'T NAWS');
                                 $this->modeState &= ~TELNET_MODE_NAWS;
                                 break;
                             case TELNET_OPT_TERMINAL_SPEED :
-                                //console('client WON\'T terminal speed');
+                                //Utils::console('client WON\'T terminal speed');
                                 $this->modeState &= ~TELNET_MODE_TERMINAL_SPEED;
                                 break;
                             case TELNET_OPT_TTYPE :
-                                //console('client WON\'T TTYPE');
+                                //Utils::console('client WON\'T TTYPE');
                                 //$this->modeState &= ~TELNET_MODE_NAWS;
                                 break;
                             case TELNET_OPT_NEW_ENVIRON :
-                                //console('client WON\'T NEW-ENVIRON');
+                                //Utils::console('client WON\'T NEW-ENVIRON');
                                 $this->modeState |= TELNET_MODE_NEW_ENVIRON;
                                 break;
                         }
@@ -256,11 +257,11 @@ class TelnetServer extends TelnetScreen
                         switch($this->inputBuffer[$a+1])
                         {
                             case TELNET_OPT_ECHO :
-                                //console('Server DO echo');
+                                //Utils::console('Server DO echo');
                                 $this->modeState |= TELNET_MODE_ECHO;
                                 break;
                             case TELNET_OPT_TTYPE :
-                                //console('Server DO ttype');
+                                //Utils::console('Server DO ttype');
                                 //$this->modeState |= TELNET_MODE_ECHO;
                                 break;
                         }
@@ -271,11 +272,11 @@ class TelnetServer extends TelnetScreen
                         switch($this->inputBuffer[$a+1])
                         {
                             case TELNET_OPT_ECHO :
-                                //console('Server DONT echo');
+                                //Utils::console('Server DONT echo');
                                 $this->modeState &= ~TELNET_MODE_ECHO;
                                 break;
                             case TELNET_OPT_TTYPE :
-                                //console('Server DONT ttype');
+                                //Utils::console('Server DONT ttype');
                                 //$this->modeState &= ~TELNET_MODE_ECHO;
                                 break;
                         }
@@ -338,21 +339,21 @@ class TelnetServer extends TelnetScreen
                                 switch ($subVars[1])
                                 {
                                     case LINEMODE_MODE :
-                                        //console('SB LINEMODE MODE sub command');
+                                        //Utils::console('SB LINEMODE MODE sub command');
                                         break;
 
                                     case LINEMODE_FORWARDMASK :
-                                        //console('SB LINEMODE FORWARDMASK sub command');
+                                        //Utils::console('SB LINEMODE FORWARDMASK sub command');
                                         break;
 
                                     case LINEMODE_SLC :
-                                        //console('SB LINEMODE SLC sub command ('.strlen($subVars).')');
+                                        //Utils::console('SB LINEMODE SLC sub command ('.strlen($subVars).')');
                                         $this->writeCharMap(substr($subVars, 2));
                                         break;
                                 }
                                 break;
                             case TELNET_OPT_NAWS :
-                                //console('SB NAWS sub command ('.strlen($subVars).')');
+                                //Utils::console('SB NAWS sub command ('.strlen($subVars).')');
                                 $this->unescapeIAC($subVars);
                                 $screenInfo = unpack('Ctype/nwidth/nheight', $subVars);
                                 $this->setWinSize($screenInfo['width'], $screenInfo['height']);
@@ -367,7 +368,7 @@ class TelnetServer extends TelnetScreen
                                 else
                                     $this->setTType(TELNET_TTYPE_OTHER);
 
-                                //console('SB TTYPE sub command ('.$this->getTType().')');
+                                //Utils::console('SB TTYPE sub command ('.$this->getTType().')');
                                 break;
                             case TELNET_OPT_NEW_ENVIRON :
                                 $this->unescapeIAC($subVars);
@@ -376,17 +377,17 @@ class TelnetServer extends TelnetScreen
                                 {
                                     case 0 :        // IS
                                         $values = substr($subVars, 2);
-                                        console('SB NEW_ENVIRON sub IS command ('.strlen($values).')');
+                                        Utils::console('SB NEW_ENVIRON sub IS command ('.strlen($values).')');
                                         break;
                                     case 1 :        // SEND
                                         break;
                                     case 2 :        // INFO
                                         $values = substr($subVars, 2);
-                                        console('SB NEW_ENVIRON sub INFO command ('.strlen($values).')');
+                                        Utils::console('SB NEW_ENVIRON sub INFO command ('.strlen($values).')');
                                         break;
                                 }
 
-                                //console('SB NEW_ENVIRON sub command ('.strlen($subVars).')');
+                                //Utils::console('SB NEW_ENVIRON sub command ('.strlen($subVars).')');
                                 break;
                         }
                         $a += $dist + 1;
@@ -402,7 +403,7 @@ class TelnetServer extends TelnetScreen
                         break;
 
                     default :
-                        console('UNKNOWN TELNET COMMAND ('.ord($this->inputBuffer[$a]).')');
+                        Utils::console('UNKNOWN TELNET COMMAND ('.ord($this->inputBuffer[$a]).')');
                         break;
 
                 }
@@ -419,7 +420,7 @@ class TelnetServer extends TelnetScreen
                     $this->inputBuffer = substr($this->inputBuffer, 0, $startIndex).substr($this->inputBuffer, $a + 1);
                     $this->inputBufferLen = strlen($this->inputBuffer);
                 }
-                //console('command');
+                //Utils::console('command');
             }
             else
             {
@@ -815,7 +816,7 @@ class TelnetServer extends TelnetScreen
                             }
                             else
                             {
-                                console(substr($input, 1));
+                                Utils::console(substr($input, 1));
                             }
 
                             // Move inputBuffer pointer ahead to cover multibyte char?
@@ -1021,7 +1022,7 @@ class TelnetServer extends TelnetScreen
             $options    = $mapData[$a++];
             $ascii        = $mapData[$a++];
 
-            //console(printf());
+            //Utils::console(printf());
             $this->charMap[$func] = array($ascii, $options);
         }
 
@@ -1224,7 +1225,7 @@ class TelnetServer extends TelnetScreen
             // Set when the last packet was flushed
             $this->lastActivity        = time();
         }
-        //console('Bytes sent : '.$bytes.' - Bytes left : '.$this->sendQLen);
+        //Utils::console('Bytes sent : '.$bytes.' - Bytes left : '.$this->sendQLen);
     }
 
     private function sendQReset()

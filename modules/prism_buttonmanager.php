@@ -1,5 +1,6 @@
 <?php
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 /**
  * "Singleton" class to manage buttons!
@@ -18,10 +19,10 @@ class ButtonManager
 
         global $PRISM;
         $trace = debug_backtrace();
-        console($trace[1]['function']);
+        Utils::console($trace[1]['function']);
         foreach (self::$buttons as $hostId => $users)
         {
-            console("\t".$hostId . ' {');
+            Utils::console("\t".$hostId . ' {');
             foreach ($users as $UCID => $buttons)
             {
                 $out = "Conn ".$UCID.': ';
@@ -30,9 +31,9 @@ class ButtonManager
                     if ($BTN != null)
                         $out .= $clickID.' ';
                 }
-                console("\t\t$out");
+                Utils::console("\t\t$out");
             }
-            console("\t}");
+            Utils::console("\t}");
         }
     }
 
@@ -177,7 +178,7 @@ class ButtonManager
             }
             else
             {
-                console('ERROR: Received click for unknown button!');
+                Utils::console('ERROR: Received click for unknown button!');
                 var_dump($BTC);
                 var_dump(self::$buttons);
             }
@@ -205,7 +206,7 @@ class ButtonManager
             }
             else
             {
-                console('ERROR: Received button text for unknown button!');
+                Utils::console('ERROR: Received button text for unknown button!');
                 var_dump($BTC);
                 var_dump(self::$buttons);
             }
@@ -366,7 +367,7 @@ class ButtonManager
                 ($area['T'] + $area['H']) > $T
             )
             {
-                console('Area already reserved. L:'.$area['L'].", T:".$area['T'].", W:".$area['W'].", H:".$area['H']);
+                Utils::console('Area already reserved. L:'.$area['L'].", T:".$area['T'].", W:".$area['W'].", H:".$area['H']);
                 return false;
             }
         }

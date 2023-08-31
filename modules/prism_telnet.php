@@ -7,6 +7,8 @@
 namespace PRISM;
 
 use PRISM\Modules\SectionHandler;
+use PRISM\Modules\Utils;
+
 require_once(ROOTPATH . '/modules/prism_telnet_defines.php');
 require_once(ROOTPATH . '/modules/prism_telnet_server.php');
 require_once(ROOTPATH . '/modules/prism_telnet_admins.php');
@@ -48,7 +50,7 @@ class TelnetHandler extends SectionHandler
 
         if ($this->loadIniFile($this->telnetVars, false)) {
             if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE) {
-                console('Loaded '.$this->iniFile);
+                Utils::console('Loaded '.$this->iniFile);
             }
         } else {
             # We ask the client to manually input the connection details here.
@@ -67,7 +69,7 @@ class TelnetHandler extends SectionHandler
 
 ININOTES;
             if ($this->createIniFile('Telnet Configuration (remote console)', array('telnet' => &$this->telnetVars), $extraInfo)) {
-                console('Generated config/'.$this->iniFile);
+                Utils::console('Generated config/'.$this->iniFile);
             }
         }
 
@@ -87,10 +89,10 @@ ININOTES;
             $this->telnetSock = @stream_socket_server('tcp://'.$this->telnetVars['ip'].':'.$this->telnetVars['port'], $errNo, $errStr);
 
             if (!is_resource($this->telnetSock) || $this->telnetSock === FALSE || $errNo) {
-                console('Error opening telnet socket : '.$errStr.' ('.$errNo.')');
+                Utils::console('Error opening telnet socket : '.$errStr.' ('.$errNo.')');
                 return false;
             } else {
-                console('Listening for telnet input on '.$this->telnetVars['ip'].':'.$this->telnetVars['port']);
+                Utils::console('Listening for telnet input on '.$this->telnetVars['ip'].':'.$this->telnetVars['port']);
             }
         }
 
@@ -152,7 +154,7 @@ ININOTES;
                 $exp = explode(':', $peerInfo);
                 $this->clients[] = new PrismTelnet($sock, $exp[0], $exp[1]);
                 $this->numClients++;
-                console('Telnet Client '.$exp[0].':'.$exp[1].' connected.');
+                Utils::console('Telnet Client '.$exp[0].':'.$exp[1].' connected.');
             }
             unset ($sock);
         }
@@ -180,7 +182,7 @@ ININOTES;
 
             // Did the client hang up?
             if ($data == '') {
-                console('Closed telnet client (client initiated) '.$this->clients[$k]->getRemoteIP().':'.$this->clients[$k]->getRemotePort());
+                Utils::console('Closed telnet client (client initiated) '.$this->clients[$k]->getRemoteIP().':'.$this->clients[$k]->getRemotePort());
                 array_splice ($this->clients, $k, 1);
                 $k--;
                 $this->numClients--;
@@ -192,7 +194,7 @@ ININOTES;
 
             if ($this->clients[$k]->getMustClose()) {
                 $this->clients[$k]->__destruct();
-                console('Closed telnet client (client ctrl-c) '.$this->clients[$k]->getRemoteIP().':'.$this->clients[$k]->getRemotePort());
+                Utils::console('Closed telnet client (client ctrl-c) '.$this->clients[$k]->getRemoteIP().':'.$this->clients[$k]->getRemotePort());
                 array_splice ($this->clients, $k, 1);
                 $k--;
                 $this->numClients--;
@@ -302,7 +304,7 @@ class PrismTelnet extends TelnetServer
                     $this->setCursorProperties(TELNET_CURSOR_HIDE);
                     $this->flush();
 
-                    console('Successful telnet login from '.$this->username.' on '.date('r'));
+                    Utils::console('Successful telnet login from '.$this->username.' on '.date('r'));
 
                     // Now setup the screen
                     $this->setupMenu();

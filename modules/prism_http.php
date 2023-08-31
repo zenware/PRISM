@@ -8,6 +8,7 @@ namespace PRISM;
 
 use PRISM\Modules\SectionHandler;
 use PRISM\Modules\PHPParser;
+use PRISM\Modules\Utils;
 
 define('HTTP_AUTH_REALM', 'Prism administration');    // Token used for http auth & digest
 define('HTTP_KEEP_ALIVE', 10);                        // Keep-alive timeout in seconds
@@ -145,7 +146,7 @@ class HttpHandler extends SectionHandler
         if ($this->loadIniFile($this->httpVars, false))
         {
             if ($PRISM->config->cvars['debugMode'] & PRISM_DEBUG_CORE)
-                console('Loaded '.$this->iniFile);
+                Utils::console('Loaded '.$this->iniFile);
         }
         else
         {
@@ -165,7 +166,7 @@ class HttpHandler extends SectionHandler
 
 ININOTES;
             if ($this->createIniFile('HTTP Configuration (web admin)', array('http' => &$this->httpVars), $extraInfo))
-                console('Generated config/'.$this->iniFile);
+                Utils::console('Generated config/'.$this->iniFile);
         }
 
         // Set docRoot
@@ -190,7 +191,7 @@ ININOTES;
         // Validate httpAuthType
         if ($this->httpVars['httpAuthType'] != 'Digest' & $this->httpVars['httpAuthType'] != 'Basic')
         {
-            console('Invalid httpAuthType in '.$this->iniFile);
+            Utils::console('Invalid httpAuthType in '.$this->iniFile);
             return false;
         }
 
@@ -206,12 +207,12 @@ ININOTES;
             $this->httpSock = @stream_socket_server('tcp://'.$this->httpVars['ip'].':'.$this->httpVars['port'], $httpErrNo, $httpErrStr);
             if (!is_resource($this->httpSock) || $this->httpSock === FALSE || $httpErrNo)
             {
-                console('Error opening http socket : '.$httpErrStr.' ('.$httpErrNo.')');
+                Utils::console('Error opening http socket : '.$httpErrStr.' ('.$httpErrNo.')');
                 return false;
             }
             else
             {
-                console('Listening for http requests on '.$this->httpVars['ip'].':'.$this->httpVars['port']);
+                Utils::console('Listening for http requests on '.$this->httpVars['ip'].':'.$this->httpVars['port']);
             }
         }
         return true;
@@ -234,7 +235,7 @@ ININOTES;
         // Check if it's valid
         if (!file_exists($this->docRoot))
         {
-            console('The path to your web-root does not exist : '.$this->httpVars['path']);
+            Utils::console('The path to your web-root does not exist : '.$this->httpVars['path']);
             return false;
         }
 
@@ -259,12 +260,12 @@ ININOTES;
         $logPath = pathinfo($this->logFile);
         if (!isset($logPath['filename']) || $logPath['filename'] == '' || !file_exists($logPath['dirname']))
         {
-            console('The path to your log folder does not exist : '.$logPath['dirname']);
+            Utils::console('The path to your log folder does not exist : '.$logPath['dirname']);
             return false;
         }
         else if (is_dir($this->logFile))
         {
-            console('The path to your http log folder is a folder itself : '.$this->logFile);
+            Utils::console('The path to your http log folder is a folder itself : '.$this->logFile);
             return false;
         }
 
@@ -280,7 +281,7 @@ ININOTES;
             return;
         if (!getIP($this->httpVars['siteDomain']))
         {
-            console('Invalid siteDomain provided in '.$this->iniFile.' (it does not resolve). Ignoring this setting.');
+            Utils::console('Invalid siteDomain provided in '.$this->iniFile.' (it does not resolve). Ignoring this setting.');
             return;
         }
 
@@ -309,7 +310,7 @@ ININOTES;
         // Check if it's valid
         if (!file_exists($this->httpVars['httpAuthPath']))
         {
-            console('httpAuthPath path does not exist : '.$this->httpVars['httpAuthPath']);
+            Utils::console('httpAuthPath path does not exist : '.$this->httpVars['httpAuthPath']);
             return false;
         }
 
@@ -355,7 +356,7 @@ ININOTES;
                 $exp = explode(':', $peerInfo);
                 $this->httpClients[] = new HttpClient($this, $sock, $exp[0], $exp[1]);
                 $this->httpNumClients++;
-                console('HTTP Client '.$exp[0].':'.$exp[1].' connected.');
+                Utils::console('HTTP Client '.$exp[0].':'.$exp[1].' connected.');
             }
             unset ($sock);
         }
@@ -387,7 +388,7 @@ ININOTES;
             // Did the client hang up?
             if ($data == '')
             {
-                console('Closed httpClient (client initiated) '.$this->httpClients[$k]->getRemoteIP().':'.$this->httpClients[$k]->getRemotePort());
+                Utils::console('Closed httpClient (client initiated) '.$this->httpClients[$k]->getRemoteIP().':'.$this->httpClients[$k]->getRemotePort());
                 array_splice ($this->httpClients, $k, 1);
                 $k--;
                 $this->httpNumClients--;
@@ -399,7 +400,7 @@ ININOTES;
             if (!$this->httpClients[$k]->handleInput($data, $errNo))
             {
                 // Something went wrong - we can hang up now
-                console('Closed httpClient ('.$errNo.' - '.HttpResponse::$responseCodes[$errNo].') '.$this->httpClients[$k]->getRemoteIP().':'.$this->httpClients[$k]->getRemotePort());
+                Utils::console('Closed httpClient ('.$errNo.' - '.HttpResponse::$responseCodes[$errNo].') '.$this->httpClients[$k]->getRemoteIP().':'.$this->httpClients[$k]->getRemotePort());
                 array_splice ($this->httpClients, $k, 1);
                 $k--;
                 $this->httpNumClients--;
@@ -416,7 +417,7 @@ ININOTES;
         {
             if ($this->httpClients[$k]->getLastActivity() < time() - HTTP_KEEP_ALIVE)
             {
-                console('Closed httpClient (keep alive) '.$this->httpClients[$k]->getRemoteIP().':'.$this->httpClients[$k]->getRemotePort());
+                Utils::console('Closed httpClient (keep alive) '.$this->httpClients[$k]->getRemoteIP().':'.$this->httpClients[$k]->getRemotePort());
                 array_splice ($this->httpClients, $k, 1);
                 $k--;
                 $this->httpNumClients--;
@@ -575,7 +576,7 @@ class HttpClient
             // Set when the last packet was flushed
             $this->lastActivity        = time();
         }
-        //console('Bytes sent : '.$bytes.' - Bytes left : '.$this->sendQLen);
+        //Utils::console('Bytes sent : '.$bytes.' - Bytes left : '.$this->sendQLen);
     }
 
     public function sendQReset()
@@ -618,7 +619,7 @@ class HttpClient
                 $this->sendWindow = STREAM_WRITE_BYTES;
         }
 
-        //console('BYTES : '.$bytes.' - PNTR : '.$this->sendFilePntr);
+        //Utils::console('BYTES : '.$bytes.' - PNTR : '.$this->sendFilePntr);
         // Done?
         if ($this->sendFilePntr >= $this->sendFileSize)
             $this->writeFileReset();
@@ -945,7 +946,7 @@ class HttpClient
 
             if (isset($this->httpRequest->SERVER['HTTP_RANGE']))
             {
-                console('HTTP_RANGE HEADER : '.$this->httpRequest->SERVER['HTTP_RANGE']);
+                Utils::console('HTTP_RANGE HEADER : '.$this->httpRequest->SERVER['HTTP_RANGE']);
                 $exp = explode('=', $this->httpRequest->SERVER['HTTP_RANGE']);
                 $startByte = (int) substr($exp[1], 0, -1);
 
@@ -1131,7 +1132,7 @@ class HttpClient
             '"'.((isset($this->httpRequest->SERVER['HTTP_REFERER'])) ? $this->httpRequest->SERVER['HTTP_REFERER'] : '-').'" '.
             '"'.((isset($this->httpRequest->SERVER['HTTP_USER_AGENT'])) ? $this->httpRequest->SERVER['HTTP_USER_AGENT'] : '-').'" '.
             '"-"';
-        console($logLine);
+        Utils::console($logLine);
         file_put_contents($this->http->getLogFile(), $logLine."\r\n", FILE_APPEND);
     }
 }

@@ -6,28 +6,8 @@ parameters:
 			path: src/Modules/AdminHandler.php
 
 		-
-			message: "#^Constant HTTP_AUTH_REALM not found\\.$#"
-			count: 3
-			path: src/Modules/AdminHandler.php
-
-		-
 			message: "#^Empty array passed to foreach\\.$#"
 			count: 2
-			path: src/Modules/AdminHandler.php
-
-		-
-			message: "#^Function PRISM\\\\console not found\\.$#"
-			count: 3
-			path: src/Modules/AdminHandler.php
-
-		-
-			message: "#^Function PRISM\\\\flagsToInteger not found\\.$#"
-			count: 1
-			path: src/Modules/AdminHandler.php
-
-		-
-			message: "#^Function flagsToString not found\\.$#"
-			count: 4
 			path: src/Modules/AdminHandler.php
 
 		-
@@ -231,11 +211,6 @@ parameters:
 			path: src/Modules/AdminHandler.php
 
 		-
-			message: "#^Function PRISM\\\\console not found\\.$#"
-			count: 3
-			path: src/Modules/ConfigHandler.php
-
-		-
 			message: "#^Function createRandomString not found\\.$#"
 			count: 1
 			path: src/Modules/ConfigHandler.php
@@ -258,11 +233,6 @@ parameters:
 		-
 			message: "#^Constant ROOTPATH not found\\.$#"
 			count: 15
-			path: src/Modules/IniLoader.php
-
-		-
-			message: "#^Function console not found\\.$#"
-			count: 2
 			path: src/Modules/IniLoader.php
 
 		-
@@ -381,22 +351,7 @@ parameters:
 			path: src/Modules/PHPParser.php
 
 		-
-			message: "#^Constant RAND_BINARY not found\\.$#"
-			count: 1
-			path: src/Modules/PHPParser.php
-
-		-
 			message: "#^Constant ROOTPATH not found\\.$#"
-			count: 1
-			path: src/Modules/PHPParser.php
-
-		-
-			message: "#^Function createRandomString not found\\.$#"
-			count: 1
-			path: src/Modules/PHPParser.php
-
-		-
-			message: "#^Function validatePHPFile not found\\.$#"
 			count: 1
 			path: src/Modules/PHPParser.php
 
@@ -469,51 +424,6 @@ parameters:
 			message: "#^Method PRISM\\\\Modules\\\\SectionHandler\\:\\:initialise\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/Modules/SectionHandler.php
-
-		-
-			message: "#^Constant CONN_CONNECTED not found\\.$#"
-			count: 1
-			path: src/PHPInSimMod.php
-
-		-
-			message: "#^Constant CONN_VERIFIED not found\\.$#"
-			count: 1
-			path: src/PHPInSimMod.php
-
-		-
-			message: "#^Constant SOCKTYPE_TCP not found\\.$#"
-			count: 1
-			path: src/PHPInSimMod.php
-
-		-
-			message: "#^Constant STREAM_READ_BYTES not found\\.$#"
-			count: 1
-			path: src/PHPInSimMod.php
-
-		-
-			message: "#^Function console not found\\.$#"
-			count: 23
-			path: src/PHPInSimMod.php
-
-		-
-			message: "#^Instantiated class PRISM\\\\HostHandler not found\\.$#"
-			count: 1
-			path: src/PHPInSimMod.php
-
-		-
-			message: "#^Instantiated class PRISM\\\\HttpHandler not found\\.$#"
-			count: 1
-			path: src/PHPInSimMod.php
-
-		-
-			message: "#^Instantiated class PRISM\\\\PluginHandler not found\\.$#"
-			count: 1
-			path: src/PHPInSimMod.php
-
-		-
-			message: "#^Instantiated class PRISM\\\\TelnetHandler not found\\.$#"
-			count: 1
-			path: src/PHPInSimMod.php
 
 		-
 			message: "#^Left side of \\|\\| is always true\\.$#"

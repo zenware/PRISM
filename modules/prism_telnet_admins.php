@@ -5,6 +5,7 @@
  * @subpackage Telnet
 */
 namespace PRISM;
+use PRISM\Modules\Utils;
 
 class TSAdminSection extends TSSection
 {
@@ -127,7 +128,7 @@ class TSAdminSection extends TSSection
 
     protected function selectItem()
     {
-//        console('Selecting item '.$this->subSection->getId().' ('.$this->subSection->getUsername().')');
+//        Utils::console('Selecting item '.$this->subSection->getId().' ('.$this->subSection->getUsername().')');
 
         // Change focus (set actives)
         $this->setActive(false);
@@ -141,7 +142,7 @@ class TSAdminSection extends TSSection
         if ($this->getActive() == true)
             return;
 
-//        console('Selecting item '.$this->subSection->getId().' ('.$this->subSection->getUsername().')');
+//        Utils::console('Selecting item '.$this->subSection->getId().' ('.$this->subSection->getUsername().')');
 
         $this->setActive(true);
         $this->getCurObject()->setBold(false);
@@ -251,7 +252,7 @@ class TSAdminContentSection extends TSSection
                     $object->getText(),
                     23
                 );
-//                console('Setting username line edit callback');
+//                Utils::console('Setting username line edit callback');
                 break;
 
             case 'adminPassword' :
@@ -277,7 +278,7 @@ class TSAdminContentSection extends TSSection
                         24
                     );
                 }
-//                console('Setting password line edit callback');
+//                Utils::console('Setting password line edit callback');
                 break;
 
             case 'adminFlags' :
@@ -303,12 +304,12 @@ class TSAdminContentSection extends TSSection
                         26
                     );
                 }
-//                console('Setting flags line edit callback');
+//                Utils::console('Setting flags line edit callback');
                 break;
 
             default :
                 $this->setInputCallback(null);
-//                console('Setting key edit callback');
+//                Utils::console('Setting key edit callback');
                 break;
         }
 
@@ -381,7 +382,7 @@ class TSAdminContentSection extends TSSection
             $textArea = new TSTextInput(30, 9, 30, 3);
             $textArea->setId('adminFlags');
             $textArea->setTType($this->getTType());
-            $textArea->setText(flagsToString($this->userDetails['accessFlags']));
+            $textArea->setText(Utils::flagsToString($this->userDetails['accessFlags']));
             $textArea->setOptions(TS_OPT_ISSELECTABLE | TS_OPT_ISEDITABLE);
             $textArea->setBorder(TS_BORDER_REGULAR);
             $textArea->setCaption('Permission flags');
@@ -448,7 +449,7 @@ class TSAdminContentSection extends TSSection
 
         $this->parentSection->redrawMenu();
 
-//        console('Save this admin '.$username.' / '.$password.' / '.$flags);
+//        Utils::console('Save this admin '.$username.' / '.$password.' / '.$flags);
     }
 
     private function adminDelete()
@@ -460,14 +461,14 @@ class TSAdminContentSection extends TSSection
 
         $this->parentSection->redrawMenu();
 
-//        console('Delete this admin '.$this->username);
+//        Utils::console('Delete this admin '.$this->username);
     }
 
     public function handleAdminInput($line)
     {
         $this->getCurObject()->setText($line);
         $this->setInputMode();
-//        console('handleAdminInput ('.$this->getCurObject()->getId().') received a line : '.$line);
+//        Utils::console('handleAdminInput ('.$this->getCurObject()->getId().') received a line : '.$line);
     }
 }
 
