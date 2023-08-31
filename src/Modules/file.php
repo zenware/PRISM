@@ -4,10 +4,12 @@
  * @package PRISM
  * @subpackage File
 */
-namespace PRISM;
 
-class file {
-    const EXTENSIONS = array(
+namespace PRISM\Modules;
+
+class file
+{
+    public const EXTENSIONS = array(
         '3gp' => 'video/3gpp',
         'a' => 'application/octet-stream',
         'ai' => 'application/postscript',
@@ -175,16 +177,37 @@ class file {
         'zip' => 'application/zip'
     );
 
-    public static function extensionLookup($extension, $fallback = 'application/octet-stream') {
-        return (isset(SELF::EXTENSIONS[$extension])) ? SELF::EXTENSIONS[$extension] : $fallback;
+    /**
+     * Fetches a media type from a file extension.
+     *
+     * https://datatracker.ietf.org/doc/html/rfc6838
+     *
+     * @param key-of<file::EXTENSIONS> $extension File extension to lookup.
+     * @param string $fallback         Optional. In case no media type is found. Defaults to `application/octet-stream`.
+     * @return string
+     */
+    public static function extensionLookup(string $extension, string $fallback = 'application/octet-stream'): string
+    {
+        return (isset(self::EXTENSIONS[$extension])) ? self::EXTENSIONS[$extension] : $fallback;
     }
 
-    public static function getKnownExtensions() {
-        return array_keys(SELF::EXTENSIONS);
+    /**
+     * Undocumented function
+     *
+     * @return key-of<file::EXTENSIONS>[]
+     */
+    public static function getKnownExtensions(): array
+    {
+        return array_keys(self::EXTENSIONS);
     }
 
-    public static function getKnownStreams() {
-        return array_values(SELF::EXTENSIONS);
+    /**
+     * Undocumented function
+     *
+     * @return value-of<file::EXTENSIONS>[]
+     */
+    public static function getKnownStreams(): array
+    {
+        return array_values(self::EXTENSIONS);
     }
 }
-?>
