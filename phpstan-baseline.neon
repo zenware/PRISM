@@ -471,11 +471,6 @@ parameters:
 			path: src/Modules/SectionHandler.php
 
 		-
-			message: "#^Call to static method cleanSessions\\(\\) on an unknown class PRISM\\\\PHPParser\\.$#"
-			count: 1
-			path: src/PHPInSimMod.php
-
-		-
 			message: "#^Constant CONN_CONNECTED not found\\.$#"
 			count: 1
 			path: src/PHPInSimMod.php

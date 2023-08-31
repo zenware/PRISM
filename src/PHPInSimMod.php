@@ -319,7 +319,7 @@ class PHPInSimMod
             if (!$this->hosts->maintenance())
                 $this->isRunning = false;
             $this->http->maintenance();
-            PHPParser::cleanSessions();
+            Modules\PHPParser::cleanSessions();
 
         } // End while(isRunning)
     }
