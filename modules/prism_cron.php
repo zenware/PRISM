@@ -31,8 +31,6 @@ class cron
                 $this->writeTemplate($this->crontab);
 
             $this->loadTable($this->crontab);
-#            Timers::Add('Cron', new Timer(1, -1, -1, array($this, 'tick')));
-#            Utils::console('Cron started ('.sizeof($this->jobs).' jobs)');
         }
         catch (Exception $e)
         {

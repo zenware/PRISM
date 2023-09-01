@@ -1,6 +1,7 @@
 <?php
 namespace PRISM;
 use PRISM\Modules\Utils;
+use PRISM\Modules\Timers;
 
 class Translations extends Timers
 {
