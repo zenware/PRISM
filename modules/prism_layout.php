@@ -49,7 +49,7 @@ class LayoutParser {
     public function parseLayout($shortTrackName, $layoutName) {
         $lyt = file_get_contents($this->basePath . $shortTrackName . '_' . $layoutName . '.lyt');
 
-        foreach (unpack(Layout::UNPACK, substr($lyt, 0, 12)) as $property => $value) {
+        foreach (unpack(self::UNPACK, substr($lyt, 0, 12)) as $property => $value) {
             $this->$property = $value;
         }
 
