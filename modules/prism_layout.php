@@ -1,5 +1,6 @@
 <?php
 namespace PRISM;
+use PRISM\Modules\LayoutObject;
 
 class LayoutParser {
 
