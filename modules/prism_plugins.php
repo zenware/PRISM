@@ -16,6 +16,7 @@ define('PRINT_CONTEXT',        PRINT_NUM);        # 3
 
 class PluginHandler extends SectionHandler
 {
+    /** @var object[] $plugins */
     private $plugins            = array();            # Stores references to the plugins we've spawned.
     private $pluginvars            = array();
 
@@ -131,7 +132,12 @@ class PluginHandler extends SectionHandler
         return $loadedPluginCount;
     }
 
-    public function getPlugins()
+    /**
+     * Undocumented function
+     *
+     * @return array<string, mixed>
+     */
+    public function getPlugins(): array
     {
         return $this->plugins;
     }

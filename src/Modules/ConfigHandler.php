@@ -10,6 +10,7 @@ use PRISM\Modules\Utils;
 
 class ConfigHandler extends SectionHandler
 {
+    /** @var array<string, mixed> $cvars */
     public $cvars    = array(
             'prefix'        => '!',
             'debugMode'        => PRISM_DEBUG_ALL,

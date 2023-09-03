@@ -27,7 +27,7 @@ ini_set('display_errors',        'true');
 
 // ROOTPATH is intentionally being configured as the root of the git repository rather than the root of this file.
 // This is so configs/data/etc. can remain where they are while refactoring.
-define('ROOTPATH', dirname(dirname(realpath(__FILE__))));
+define('ROOTPATH', dirname(dirname((string) realpath(__FILE__))));
 
 // the REQUIRED modules for PRISM.
 use PRISM\Modules;
@@ -59,57 +59,32 @@ class PHPInSimMod
     const ROOTPATH = ROOTPATH;
 
     /* Run Time Arrays */
-    public $config              = null;
-    public $hosts               = null;
-    public $http                = null;
-    public $telnet              = null;
-    public $plugins             = null;
-    public $admins              = null;
+    public Modules\ConfigHandler $config;
+    public \PRISM\HostHandler $hosts;
+    public \PRISM\HttpHandler $http;
+    public \PRISM\TelnetHandler $telnet;
+    public \PRISM\PluginHandler $plugins;
+    public Modules\AdminHandler $admins;
 
     # Time outs
-    private $sleep              = null;
-    private $uSleep             = null;
+    // Note: I'm assuming these are primarily int|float, but I'm not certain.
+    private mixed $sleep = null;
+    private mixed $uSleep = null;
 
-    private $nextMaintenance    = 0;
-    public $isWindows           = false;
+    private int $nextMaintenance = 0;
+    public bool $isWindows = false;
 
     // Main while loop will run as long as this is set to true.
-    private $isRunning          = false;
+    private bool $isRunning = false;
 
     // Real Magic Functions
     public function __construct()
     {
-        // This reregisters our autoload magic function into the class.
-        spl_autoload_register(function ($className) {
-            $className = ltrim($className, '\\');
-            $fileName = '';
-            $namespace = '';
-
-            if ($lastNsPos = strrpos($className, '\\')) {
-                $namespace = substr($className, 0, $lastNsPos);
-                $className = substr($className, $lastNsPos + 1);
-                $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
-            }
-            $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
-        
-            //require $fileName;
-
-            $directories = ["modules" . DIRECTORY_SEPARATOR, "plugins" . DIRECTORY_SEPARATOR];
-            foreach ($directories as $directory) {
-                $filePath = "{$directory}{$fileName}";
-                if (file_exists($filePath)) {
-                    // If I just use 'require' it will attempt to include multiple times which isn't allowed.
-                    require_once $filePath;
-                }
-                //include_once(ROOTPATH . "/" . $directory . "prism_" . $className . ".php");
-            }
-        });
         // https://www.php.net/manual/en/function.set-error-handler.php
         set_error_handler(__CLASS__ . '::_errorHandler', E_ALL | E_STRICT);
 
         // Windows OS check
-        if (preg_match('/^win/i', PHP_OS))
-            $this->isWindows = true;
+        $this->isWindows = (PHP_OS_FAMILY == 'Windows');
 
         $this->config    = new Modules\ConfigHandler();
         $this->hosts    = new \PRISM\HostHandler();
@@ -119,13 +94,15 @@ class PHPInSimMod
         $this->admins    = new Modules\AdminHandler();
     }
 
-    public static function _errorHandler($errno, $errstr, $errfile, $errline, $errcontext=null)
+    public static function _errorHandler(int $errno, string $errstr, string $errfile, int $errline): bool
     {
         // https://www.php.net/manual/en/function.set-error-handler.php
         // errcontext is deprecated in PHP 7.2.0 and REMOVED in PHP 8.0.0
         # This error code is not included in error_reporting
         if (!(error_reporting() & $errno))
-            return;
+            return false;
+
+        $andExit = false;
 
         switch ($errno) {
             case E_ERROR:
@@ -159,7 +136,7 @@ class PHPInSimMod
             }
         }
 
-        if (isset($andExit) AND $andExit == true)
+        if ($andExit)
             exit(1);
 
         # Don't execute PHP internal error handler
@@ -167,7 +144,7 @@ class PHPInSimMod
         return true;
     }
 
-    public function initialise($argc, $argv)
+    public function initialise(): void
     {
         // Set the timezone
         if (isset($this->config->cvars['defaultTimeZone']))
@@ -203,41 +180,44 @@ class PHPInSimMod
         }
     }
 
-    public function start()
+    public function start(): void
     {
         if ($this->isRunning)
             return;
 
         $this->isRunning = true;
-        $this->nextMaintenance = time () + MAINTENANCE_INTERVAL;
+        $this->nextMaintenance = time() + MAINTENANCE_INTERVAL;
 
         $this->main();
     }
 
-    protected function main()
+    protected function main(): void
     {
         while ($this->isRunning === true) {
             // Setup our listen arrays
-            $sockReads = $sockWrites = $socketExcept = array();
+            $sockReads = array();
+            $sockWrites = array();
+            $socketExcept = array();
 
             if (!$this->isWindows)
                 $sockReads[] = STDIN;
 
-            // Add host sockets to the arrays as needed
+            // Fill $sockReads array with sockets to read from.
             // While at it, check if we need to connect to any of the hosts.
             $this->hosts->getSelectableSockets($sockReads, $sockWrites);
-
-            // Add http sockets to the arrays as needed
             $this->http->getSelectableSockets($sockReads, $sockWrites);
-
-            // Add telnet sockets to the arrays as needed
             $this->telnet->getSelectableSockets($sockReads, $sockWrites);
 
             // Update timeout if there are timers waiting to be fired.
             $this->updateSelectTimeOut($this->sleep, $this->uSleep);
 
             # Error suppression used because this function returns a "Invalid CRT parameters detected" only on Windows.
+            // Consider catching the warning.
             $numReady = @stream_select($sockReads, $sockWrites, $socketExcept, $this->sleep, $this->uSleep);
+
+            if (empty($sockReads) || empty($sockWrites)) {
+                throw new \Exception("Could not find at least, both a selectable read and write socket. Cannot continue execution.");
+            }
 
             // Keep looping until you've handled all activities on the sockets.
             while ($numReady > 0) {
@@ -248,7 +228,10 @@ class PHPInSimMod
                 // KB input
                 if (in_array (STDIN, $sockReads)) {
                     $numReady--;
-                    $kbInput = trim(fread (STDIN, STREAM_READ_BYTES));
+                    $bytes = fread(STDIN, STREAM_READ_BYTES);
+                    if (!$bytes) { continue; }
+                    
+                    $kbInput = trim($bytes);
 
                     // Split up the input
                     $exp = explode (' ', $kbInput);
@@ -257,7 +240,7 @@ class PHPInSimMod
                     switch ($exp[0]) {
                         case 'c':
                             Utils::console(sprintf('%32s - %64s', 'COMMAND', 'DESCRIPTION'));
-                            foreach ($this->plugins->getPlugins() as $plugin => $details) {
+                            foreach ($this->plugins->getPlugins() as $details) {
                                 foreach ($details->sayCommands as $command => $detail) {
                                     Utils::console(sprintf('%32s - %64s', $command, $detail['info']));
                                 }
@@ -275,12 +258,12 @@ class PHPInSimMod
 
                         case 'I':
                             Utils::console('RE-INITIALISING PRISM...');
-                            $this->initialise(null, null);
+                            $this->initialise();
                             break;
 
                         case 'p':
                             Utils::console(sprintf('%28s %8s %24s %64s', 'NAME', 'VERSION', 'AUTHOR', 'DESCRIPTION'));
-                            foreach ($this->plugins->getPlugins() as $plugin => $details) {
+                            foreach ($this->plugins->getPlugins() as $plugin) {
                                 Utils::console(sprintf("%28s %8s %24s %64s", $plugin::NAME, $plugin::VERSION, $plugin::AUTHOR, $plugin::DESCRIPTION));
                             }
                             break;
@@ -312,9 +295,9 @@ class PHPInSimMod
             } // End while(numReady)
 
             // No need to do the maintenance check every turn
-            if ($this->nextMaintenance > time ())
+            if ($this->nextMaintenance > time())
                 continue;
-            $this->nextMaintenance = time () + MAINTENANCE_INTERVAL;
+            $this->nextMaintenance = time() + MAINTENANCE_INTERVAL;
             if (!$this->hosts->maintenance())
                 $this->isRunning = false;
             $this->http->maintenance();
@@ -323,25 +306,36 @@ class PHPInSimMod
         } // End while(isRunning)
     }
 
-    private function updateSelectTimeOut(&$sleep, &$uSleep)
+    /**
+     * Undocumented function
+     * 
+     * This seems like it's meant to trigger/update any timers registered to plugins.
+     * However it seems terribly busted. This is only called from inside this
+     * class. Consider for removal.
+     *
+     * @param mixed $sleep
+     * @param mixed $uSleep
+     * @return void
+     */
+    private function updateSelectTimeOut(mixed &$sleep, mixed &$uSleep)
     {
         $sleep = 1;
         $uSleep = null;
         $timeout = null;
         $sleepTime = null;
 
-        foreach ($this->plugins->getPlugins() as $plugin => $object) {
+        foreach ($this->plugins->getPlugins() as $_ => $object) {
             $timeout = $object->executeTimers();
 
             if ($timeout < $sleepTime)
                 $sleepTime = $timeout;
         }
 
-        # If there are no timers set or the next timeout is more then a second away, set the Sleep to 1 & uSleep to null.
-        if ($sleepTime == null || $timeout < $sleepTime) {
-            $sleepTime = $timeout;
-        } else {    # Set the timeout to the delta of now as compared to the next timer.
-            list($sleep, $uSleep) = explode('.', sprintf('%1.6f', $timeNow - $sleepTime));
+        // If there are no timers set or the next timeout is more then a second away, set the Sleep to 1 & uSleep to null.
+        // Set the timeout to the delta of now as compared to the next timer.
+        if (!($timeout < $sleepTime)) {
+            $timeNow = time();
+            list($sleep, $uSleep) = explode('.', sprintf('%1.6f', $timeNow - (float) $sleepTime));
             if (($sleep >= 1 && $uSleep >= 1) || $uSleep >= 1000000) {
                 $sleep = 1;
                 $uSleep = null;
