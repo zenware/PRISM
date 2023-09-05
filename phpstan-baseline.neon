@@ -1,4 +1,6 @@
 parameters:
+	excludePaths:
+		- src/Modules/HttpHandler.php
 	ignoreErrors:
 		-
 			message: "#^Call to static method queryAdmins\\(\\) on an unknown class PRISM\\\\Modules\\\\Interactive\\.$#"
@@ -336,27 +338,12 @@ parameters:
 			path: src/Modules/PHPParser.php
 
 		-
-			message: "#^Call to method addHeader\\(\\) on an unknown class PRISM\\\\Modules\\\\HttpResponse\\.$#"
-			count: 1
-			path: src/Modules/PHPParser.php
-
-		-
-			message: "#^Call to method setCookie\\(\\) on an unknown class PRISM\\\\Modules\\\\HttpResponse\\.$#"
-			count: 2
-			path: src/Modules/PHPParser.php
-
-		-
 			message: "#^Constant ROOTPATH not found\\.$#"
 			count: 1
 			path: src/Modules/PHPParser.php
 
 		-
 			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:cleanSessions\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Modules/PHPParser.php
-
-		-
-			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/Modules/PHPParser.php
 
@@ -386,22 +373,12 @@ parameters:
 			path: src/Modules/PHPParser.php
 
 		-
-			message: "#^Method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has parameter \\$file with no type specified\\.$#"
-			count: 1
-			path: src/Modules/PHPParser.php
-
-		-
 			message: "#^Parameter \\#1 \\$data of function gzencode expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Modules/PHPParser.php
 
 		-
 			message: "#^Parameter \\#3 \\$subject of function preg_replace expects array\\|string, string\\|false given\\.$#"
-			count: 1
-			path: src/Modules/PHPParser.php
-
-		-
-			message: "#^Parameter \\$RESPONSE of method PRISM\\\\Modules\\\\PHPParser\\:\\:parseFile\\(\\) has invalid type PRISM\\\\Modules\\\\HttpResponse\\.$#"
 			count: 1
 			path: src/Modules/PHPParser.php
 

@@ -35,7 +35,6 @@ use PRISM\Modules\Utils;
 require_once(ROOTPATH . '/modules/prism_packets.php');
 require_once(ROOTPATH . '/modules/prism_hosts.php');
 require_once(ROOTPATH . '/modules/prism_statehandler.php');
-require_once(ROOTPATH . '/modules/prism_http.php');
 require_once(ROOTPATH . '/modules/prism_telnet.php');
 require_once(ROOTPATH . '/modules/prism_translations.php');
 require_once(ROOTPATH . '/modules/prism_plugins.php');
@@ -61,7 +60,7 @@ class PHPInSimMod
     /* Run Time Arrays */
     public Modules\ConfigHandler $config;
     public \PRISM\HostHandler $hosts;
-    public \PRISM\HttpHandler $http;
+    public Modules\HttpHandler $http;
     public \PRISM\TelnetHandler $telnet;
     public \PRISM\PluginHandler $plugins;
     public Modules\AdminHandler $admins;
@@ -89,7 +88,7 @@ class PHPInSimMod
         $this->config    = new Modules\ConfigHandler();
         $this->hosts    = new \PRISM\HostHandler();
         $this->plugins    = new \PRISM\PluginHandler();
-        $this->http        = new \PRISM\HttpHandler();
+        $this->http        = new Modules\HttpHandler();
         $this->telnet    = new \PRISM\TelnetHandler();
         $this->admins    = new Modules\AdminHandler();
     }

@@ -4,11 +4,7 @@
  * @package PRISM
  * @subpackage Http
 */
-namespace PRISM;
-
-use PRISM\Modules\SectionHandler;
-use PRISM\Modules\PHPParser;
-use PRISM\Modules\Utils;
+namespace PRISM\Modules;
 
 define('HTTP_AUTH_REALM', 'Prism administration');    // Token used for http auth & digest
 define('HTTP_KEEP_ALIVE', 10);                        // Keep-alive timeout in seconds
@@ -1777,5 +1773,3 @@ class HttpResponse
         $this->cookies[$name] = array($value, $expire, $path, $domain, $secure, $httponly);
     }
 }
-
-?>

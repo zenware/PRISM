@@ -5,7 +5,9 @@
  * @subpackage PHPParser
 */
 namespace PRISM\Modules;
-use PRISM\Modules\Utils;
+// NOTE: The following is temporary and required to make sure HttpResponse is loaded from the HttpHandler file.
+// The following commit will resolve this.
+use PRISM\Modules\HttpHandler;
 
 define('PRISM_SESSION_TIMEOUT', 900);        // how long a session is valid
 
@@ -14,7 +16,7 @@ class PHPParser
     private static $scriptCache = array();
     private static $sessions = array();
 
-    public static function parseFile(HttpResponse &$RESPONSE, $file, array $SERVER, array &$GET, array &$POST, array &$COOKIE, array &$FILES)
+    public static function parseFile(HttpResponse &$RESPONSE, string $file, array $SERVER, array &$GET, array &$POST, array &$COOKIE, array &$FILES): false|string
     {
         global $PRISM;
 
