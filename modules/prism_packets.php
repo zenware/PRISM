@@ -6,6 +6,7 @@
  */
 
 /* Start of PRISM PACKET HEADER */
+#[\AllowDynamicProperties]
 abstract class Struct
 {
     public function __conStruct($rawPacket = null)
@@ -24,14 +25,14 @@ abstract class Struct
         $argc = count($argv);
 
         foreach ($this as $property => $value) {
+            if ($argi >= $argc) {
+                break;
+            }
+
             $RP = new ReflectionProperty(get_class($this), $property);
 
             if ($RP->isPublic()) {
-                $object->$property = $argv[$argi++];
-            }
-
-            if ($argc == $argi) {
-                continue;
+                $this->$property = $argv[$argi++];
             }
         }
     }
@@ -90,7 +91,10 @@ abstract class Struct
         $str = $pre . get_class($this) . ' {' . PHP_EOL;
 
         foreach ($this as $property => $value) {
-            $pkFnkFormat = $packFormat[++$propertyNumber];
+            if (!isset($packFormat[++$propertyNumber])) {
+                break;
+            }
+            $pkFnkFormat = $packFormat[$propertyNumber];
 
             if (gettype($this->$property) == 'array') {
                 $str .= "{$pre}\tArray\t{$property}\t= {" . PHP_EOL;
@@ -117,11 +121,43 @@ abstract class Struct
 
     public function unpack($rawPacket)
     {
-        foreach (unpack($this::UNPACK, $rawPacket) as $property => $value) {
+        $unpacked = unpack($this::UNPACK, $rawPacket);
+        if ($unpacked === false) {
+            return $this;
+        }
+
+        foreach ($unpacked as $property => $value) {
             if(is_string($value)) {
                 $value = trim($value);
             }
             $this->$property = $value;
+        }
+
+        // unpack() names repeated fields Field1..FieldN. Rebuild the array
+        // property the packet classes expose (Pos, Tyres, PLID, ...) so
+        // pack() and consumers see the same shape as before unpacking.
+        foreach ($this->parseUnpackFormat() as $name => $format) {
+            if (!preg_match('/^[^aA]([0-9]+)$/', $format, $matches)) {
+                continue;
+            }
+            $count = (int) $matches[1];
+            if ($count < 2 || !isset($unpacked[$name . '1'])) {
+                continue;
+            }
+
+            $values = array();
+            $complete = true;
+            for ($i = 1; $i <= $count; ++$i) {
+                if (!isset($unpacked[$name . $i])) {
+                    $complete = false;
+                    break;
+                }
+                $values[] = $unpacked[$name . $i];
+            }
+
+            if ($complete && property_exists($this, $name)) {
+                $this->$name = $values;
+            }
         }
 
         return $this;
@@ -133,7 +169,10 @@ abstract class Struct
         $propertyNumber = -1;
 
         foreach ($this as $property => $value) {
-            $pkFnkFormat = $packFormat[++$propertyNumber];
+            if (!isset($packFormat[++$propertyNumber])) {
+                break; # A subclass may have extra properties that are not on the wire.
+            }
+            $pkFnkFormat = $packFormat[$propertyNumber];
 
             if ($pkFnkFormat == 'x') {
                 $return .= pack('C', 0); # null & 0 are the same thing in Binary (00000000) and Hex (x00), so null == 0.
@@ -141,14 +180,19 @@ abstract class Struct
                 list($type, $elements) = $pkFnkFormat;
 
                 for ($i = 0; $i < $elements; ++$i) {
-                    if(isset($value[$i])){
-                        var_dump($value, $type, $elements, $i, $value[$i]);
+                    if ($type == 'x') {
+                        $return .= pack('x');
+                    } elseif(isset($value[$i])) {
                         $return .= pack($type, $value[$i]);
                     } else {
                         $return .= pack("x");
                     }
                 }
             } else {
+                if ($value === null) {
+                    $type = substr($pkFnkFormat, 0, 1);
+                    $value = ($type == 'a' || $type == 'A') ? '' : 0;
+                }
                 $return .= pack($pkFnkFormat, $value);
             }
         }
@@ -161,7 +205,7 @@ abstract class Struct
         $return = array();
 
         foreach (explode('/', $this::UNPACK) as $element) {
-            for ($i = 1; is_numeric($element[$i]); ++$i) {}
+            for ($i = 1; isset($element[$i]) && is_numeric($element[$i]); ++$i) {}
 
             $dataType = substr($element, 0, $i);
             $dataName = substr($element, $i);
@@ -178,7 +222,7 @@ abstract class Struct
 
         for ($i = 0, $j = 1, $k = strLen($format); $i < $k; ++$i, ++$j)
         {    # i = Current Character; j = Look ahead for numbers.
-            if (is_string($format[$i]) && !isset($format[$j]) || !is_numeric($format[$j]))
+            if (!isset($format[$j]) || !is_numeric($format[$j]))
             {
                 $elements[] = $format[$i];
             }
@@ -876,7 +920,7 @@ class IS_ACR extends Struct // Admin Command Report - any user typed an admin co
     public $UCID;               # connection's unique id (0 = host)
     public $Admin;              # set if user is an admin
     public $Result;             # 1 - processed / 2 - rejected / 3 - unknown command
-    private $Sp3;
+    protected $Sp3;
 
     public $Text;
 }; function IS_ACR() { return new IS_ACR; }
@@ -1915,7 +1959,7 @@ class IS_REO extends Struct // REOrder (when race restarts after qualifying)
 
         for ($Pos = 1; $Pos <= 40; ++$Pos) {
             if ($pkClass["PLID{$Pos}"] != 0) {
-                $pkClass['PLID'][$Pos] = $pkClass["PLID{$Pos}"];
+                $pkClass['PLID'][] = $pkClass["PLID{$Pos}"];
             }
             unset($pkClass["PLID{$Pos}"]);
         }
@@ -2480,7 +2524,7 @@ class IS_OBH extends Struct // OBject Hit - car hit an autocross object or an un
     public $Y;                  # as in ObjectInfo
 
     public $Zbyte;              # if OBH_LAYOUT is set : Zbyte as in ObjectInfo
-    private $Sp1;
+    protected $Sp1;
     public $Index;              # AXO_x as in ObjectInfo or zero if it is an unknown object
     public $OBHFlags;           # see below
 
@@ -2515,7 +2559,7 @@ class IS_HLV extends Struct // Hot Lap Validity - off track / hit wall / speedin
     public $PLID;               # player's unique id
 
     public $HLVC;               # 0 : ground / 1 : wall / 4 : speeding / 5 : out of bounds
-    private    $Sp1;
+    protected    $Sp1;
     public $Time;               # looping time stamp (hundredths - time since reset - like TINY_GTH)
 
     public $C;
@@ -2543,10 +2587,10 @@ class IS_UCO extends Struct // User Control Object
     protected $ReqI;            # 0
     public $PLID;               # player's unique id
 
-    private $Sp0;
+    protected $Sp0;
     public $UCOAction;
-    private $Sp2;
-    private $Sp3;
+    protected $Sp2;
+    protected $Sp3;
 
     public $Time;               # hundredths of a second since start (as in SMALL_RTP)
     
@@ -2599,10 +2643,10 @@ class IS_CSC extends Struct // Car State Changed - reports a change in a car's s
     protected $ReqI;            # 0
     public $PLID;               # player's unique id
 
-    private $Sp0;
+    protected $Sp0;
     public $CSCAction;
-    private $Sp2;
-    private $Sp3;
+    protected $Sp2;
+    protected $Sp3;
 
     public $Time;               # hundredths of a second since start (as in SMALL_RTP)
 
@@ -2703,7 +2747,7 @@ class IS_AXM extends Struct // AutoX Multiple objects - variable size
     public $UCID = 0;           # unique id of the connection that sent the packet
     public $PMOAction;          # see below
     public $PMOFlags;           # see below
-    private $Sp3;
+    protected $Sp3;
 
     public $Info = array();     # info about each object, 0 to 30 of these
 
@@ -2875,7 +2919,7 @@ class IS_SCC extends Struct // Set Car Camera - Simplified camera packet (not SH
 class IS_CPP extends Struct // Cam Pos Pack - Full camera packet (in car OR SHIFT+U mode)
 {
     const PACK = 'CCCxl3vvvCCfvv';
-    const UNPACK = 'CSize/CType/CReqI/CZero/l3Pos/vH/vP/vR/CViewPLID/CInGameCam/fFOV/CTime/CFlags';
+    const UNPACK = 'CSize/CType/CReqI/CZero/l3Pos/vH/vP/vR/CViewPLID/CInGameCam/fFOV/vTime/vFlags';
 
     protected $Size = 32;       # 32
     protected $Type = ISP_CPP;  # ISP_CPP
@@ -2895,6 +2939,13 @@ class IS_CPP extends Struct // Cam Pos Pack - Full camera packet (in car OR SHIF
 
     public $Time;               # Time in ms to get there (0 means instant)
     public $Flags;              # ISS state flags (see below)
+
+    public function unpack($rawPacket)
+    {
+        parent::unpack($rawPacket);
+        $this->Pos = array($this->Pos1, $this->Pos2, $this->Pos3);
+        return $this;
+    }
 }; function IS_CPP() { return new IS_CPP; }
 
 // The ISS state flags that can be set are :
@@ -3305,12 +3356,22 @@ class OutSimPack extends Struct
     {
         $unpack = (strlen($rawPacket) == self::LENGTH) ? $this::UNPACK : $this::UNPACK . '/VID';
 
-        foreach (unpack($unpack, $rawPacket) as $property => $value) {
+        $unpacked = unpack($unpack, $rawPacket);
+        if ($unpacked === false) {
+            return $this;
+        }
+
+        foreach ($unpacked as $property => $value) {
             if(is_string($value)) {
                 $value = trim($value);
             }
             $this->$property = $value;
         }
+
+        $this->AngVel = array($this->AngVel1, $this->AngVel2, $this->AngVel3);
+        $this->Accel  = array($this->Accel1, $this->Accel2, $this->Accel3);
+        $this->Vel    = array($this->Vel1, $this->Vel2, $this->Vel3);
+        $this->Pos    = array($this->Pos1, $this->Pos2, $this->Pos3);
 
         return $this;
     }
@@ -3472,6 +3533,19 @@ class HInfo // Sub packet for IR_HOS. Contains host information
     public $Track;      # Short track name
     public $Flags;      # Info flags about the host - see NOTE 1) below
     public $NumConns;   # Number of people on the host
+
+    public function __construct($raw = null)
+    {
+        if ($raw === null) {
+            return;
+        }
+        foreach (unpack(self::UNPACK, $raw) as $property => $value) {
+            if (is_string($value)) {
+                $value = trim($value);
+            }
+            $this->$property = $value;
+        }
+    }
 };
 
 // NOTE 1)
@@ -3488,7 +3562,7 @@ $HOS = array(HOS_SPECPASS => 'HOS_SPECPASS', HOS_LICENSED => 'HOS_LICENSED', HOS
 class IR_HOS extends Struct // Hostlist (hosts connected to the Relay)
 {
     const PACK = 'CCCCa6';
-    const UNPACK = 'CSize/CType/CReqI/CNumHosts/a6Info';
+    const UNPACK = 'CSize/CType/CReqI/CNumHosts';
 
     protected $Size;            # 4 + NumHosts * 40
     protected $Type = IRP_HOS;  # IRP_HOS

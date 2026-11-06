@@ -5,6 +5,7 @@
  * @subpackage SMX
 */
 // Simple Mesh eXport
+#[\AllowDynamicProperties]
 class SMX
 {
     const HEADER = 'a6LFSSMX/CGameVersion/CGameRevision/CSMXVersion/xDimensions/CResolution/CVertexColors/x4/a32Track/x3GroundColor/x9/VObjects';
@@ -54,11 +55,12 @@ class SMX
 
     protected function readObject(&$offset)
     {
-        return new Object($offset, $this->file);
+        return new SMXObject($offset, $this->file);
     }
 }
 
-class Object
+#[\AllowDynamicProperties]
+class SMXObject
 {
     const CENTER = 'VX/VY/VZ';
     const OBJECT = 'VRadius/VPoints/VTriangles';
@@ -73,10 +75,10 @@ class Object
     public function __construct(&$offset, $file)
     {
         # Center
-        $this->Center = unpack(Object::CENTER, substr($file, $offset, 12));
+        $this->Center = unpack(SMXObject::CENTER, substr($file, $offset, 12));
         $offset += 12;
         # Object
-        $Object = unpack(Object::OBJECT, substr($file, $offset, 12));
+        $Object = unpack(SMXObject::OBJECT, substr($file, $offset, 12));
 
         foreach ($Object as $property => $value) {
             $this->$property = $value;
@@ -86,12 +88,17 @@ class Object
 
         # Point
         for ($i = 0, $Points = $this->Points, $this->Points = array(); $i < $Points; ++$i, $offset += 16) {
-            $this->Points[$i] = unpack(Object::POINT, substr($file, $offset, 16));
+            $this->Points[$i] = unpack(SMXObject::POINT, substr($file, $offset, 16));
         }
 
         # Triangle
         for ($i = 0, $Triangles = $this->Triangles, $this->Triangles = array(); $i < $Triangles; ++$i, $offset += 8) {
-            $this->Triangles[$i] = unpack(Object::TRIANGLE, substr($file, $offset, 8));
+            $this->Triangles[$i] = unpack(SMXObject::TRIANGLE, substr($file, $offset, 8));
         }
     }
+}
+
+// PHP < 7.2 still allows the historical Object class name.
+if (PHP_VERSION_ID < 70200 && !class_exists('Object', false)) {
+    class_alias('SMXObject', 'Object');
 }

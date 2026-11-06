@@ -27,6 +27,14 @@ class PHPParser
         // Change working dir to docRoot
         chdir($PRISM->http->getDocRoot());
 
+        // The documented page API uses $_RESPONSE, $_GET, $_POST and $_COOKIE.
+        // Expose those names alongside the historical $RESPONSE/$GET/... names.
+        $_RESPONSE = $RESPONSE;
+        $_GET = $GET;
+        $_POST = $POST;
+        $_COOKIE = $COOKIE;
+        $_FILES = $FILES;
+
         $prismScriptNameHash = md5($PRISM->http->getDocRoot().$file);
         $prismScriptMTime = filemtime($PRISM->http->getDocRoot().$file);
         clearstatcache();

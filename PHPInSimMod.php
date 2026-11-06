@@ -26,6 +26,8 @@ ini_set('display_errors',        'true');
 
 define('ROOTPATH', dirname(realpath(__FILE__)));
 
+require_once(ROOTPATH . '/modules/prism_version.php');
+
 // the REQUIRED modules for PRISM.
 require_once(ROOTPATH . '/modules/prism_functions.php');
 require_once(ROOTPATH . '/modules/prism_config.php');
@@ -59,7 +61,7 @@ $PRISM->start();
 */
 class PHPInSimMod
 {
-    const VERSION = '0.6.1';
+    const VERSION = PRISM_VERSION;
     const ROOTPATH = ROOTPATH;
 
     /* Run Time Arrays */

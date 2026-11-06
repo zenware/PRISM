@@ -44,11 +44,11 @@ class Path
             return trigger_error('Not a LFS PTH file', E_USER_ERROR);
         }
 
-        if (substr($file, 6, 1) != $this->Version) {
+        if (ord(substr($file, 6, 1)) !== (int) $this->Version) {
             return trigger_error('Not a LFS PTH Version Is Different Than PTH Parser', E_USER_ERROR);
         }
 
-        if (substr($file, 7, 1) != $this->Revision) {
+        if (ord(substr($file, 7, 1)) !== (int) $this->Revision) {
             return trigger_error('Not a LFS PTH Revision Is Different Than PTH Parser', E_USER_ERROR);
         }
 
@@ -201,6 +201,7 @@ class Path
     }
 }
 
+#[\AllowDynamicProperties]
 class Node
 {
     public $Center;
@@ -216,6 +217,7 @@ class Node
     }
 }
 
+#[\AllowDynamicProperties]
 class Center
 {
     const PACK = 'lll';
@@ -231,6 +233,7 @@ class Center
     }
 }
 
+#[\AllowDynamicProperties]
 class Direction
 {
     const PACK = 'fff';
@@ -246,6 +249,7 @@ class Direction
     }
 }
 
+#[\AllowDynamicProperties]
 class Limit
 {
     const PACK = 'ff';
@@ -261,6 +265,7 @@ class Limit
     }
 }
 
+#[\AllowDynamicProperties]
 class Road
 {
     const PACK = 'ff';
@@ -274,4 +279,9 @@ class Road
         foreach (unpack($this::UNPACK, $rawRoad) as $property => $value)
             $this->$property = $value;
     }
+}
+
+// Historical name used by the LVS plugin. Keep both names available.
+if (!class_exists('PTH', false)) {
+    class_alias('Path', 'PTH');
 }

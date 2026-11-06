@@ -573,6 +573,7 @@ class PlayerHandler extends PropertyMaster
 /**
  * Property Master allows for us the retreive read only properties on our classes.
 */
+#[\AllowDynamicProperties]
 abstract class PropertyMaster
 {
     public function __get($property)

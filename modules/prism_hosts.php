@@ -474,13 +474,13 @@ class HostHandler extends SectionHandler
                 switch ($pH['Type'])
                 {
                     case ISP_TINY:
-                        console("< ${TINY[$pH['SubT']]} Packet from {$hostID}.");
+                        console("< {$TINY[$pH['SubT']]} Packet from {$hostID}.");
                     break;
                     case ISP_SMALL:
-                        console("< ${SMALL[$pH['SubT']]} Packet from {$hostID}.");
+                        console("< {$SMALL[$pH['SubT']]} Packet from {$hostID}.");
                     break;
                     default:
-                        console("< ${TYPEs[$pH['Type']]} Packet from {$hostID}.");
+                        console("< {$TYPEs[$pH['Type']]} Packet from {$hostID}.");
                 }
             }
             $packet = new $TYPEs[$pH['Type']]($rawPacket);
@@ -488,7 +488,7 @@ class HostHandler extends SectionHandler
         }
         else
         {
-            console("Unknown Type Byte of ${pH['Type']}, with reported size of ${pH['Size']} Bytes and actual size of " . strlen($rawPacket) . ' Bytes.');
+            console("Unknown Type Byte of {$pH['Type']}, with reported size of {$pH['Size']} Bytes and actual size of " . strlen($rawPacket) . ' Bytes.');
         }
     }
 
@@ -634,13 +634,13 @@ class HostHandler extends SectionHandler
             switch ($packetClass->Type)
             {
                 case ISP_TINY:
-                    console("> ${TINY[$packetClass->SubT]} Packet to {$hostId}.");
+                    console("> {$TINY[$packetClass->SubT]} Packet to {$hostId}.");
                 break;
                 case ISP_SMALL:
-                    console("> ${SMALL[$packetClass->SubT]} Packet to {$hostId}.");
+                    console("> {$SMALL[$packetClass->SubT]} Packet to {$hostId}.");
                 break;
                 default:
-                    console("> ${TYPEs[$packetClass->Type]} Packet to {$hostId}.");
+                    console("> {$TYPEs[$packetClass->Type]} Packet to {$hostId}.");
             }
         }
 
@@ -743,6 +743,8 @@ class InsimConnection
     private $specPass        = '';            # specpass for relay usage
     private $pps            = 3;
     private $hostName        = '';            # the hostname. Can be populated by user in case of relay.
+    private $prefix            = '!';            # command prefix advertised to the host
+    private $lastActivity    = 0;                # last queue activity timestamp
 
     public function __construct(array &$icVars)
     {

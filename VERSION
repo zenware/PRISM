@@ -1,3 +1,16 @@
+0.7.0
+	* PHP 7.1 bridge release. Keeps the 0.6.x packet, plugin and page APIs
+		while adding compatibility with PHP 5.6 through 8.5.
+	+ Added a dependency-free test harness with byte-for-byte packet fixtures.
+	+ Added cross-version checks for PHP 5.6, 7.1 and 8.5.
+	+ Fixed packet packing with protected spare fields, repeated fields,
+		null fields and array reconstruction after unpack().
+	+ Fixed IS_CPP PACK/UNPACK, IS_REO PLID ordering, IR_HOS/HInfo and OutSim vectors.
+	+ Added PHP 8 compatibility attributes and aliases for Object, PTH and dynamic properties.
+	+ The page API now exposes the documented $_RESPONSE, $_GET, $_POST and $_COOKIE names.
+	* Removed live var_dump() output from packet packing.
+	= PHP 5.6 and 7.1 are end-of-life; use them only as migration bridges.
+
 0.4.0
 	* Added a Button handler, that should be used to ensure no button colisions occur.
 		Includes Button class, to be used in place of IS_BTN directly.

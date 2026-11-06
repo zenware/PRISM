@@ -163,6 +163,7 @@ class PluginHandler extends SectionHandler
     }
 }
 
+#[\AllowDynamicProperties]
 abstract class Plugins extends Translations
 {
     /** These consts should _ALWAYS_ be defined in your classes. */

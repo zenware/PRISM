@@ -54,7 +54,7 @@ class cron
                 if (FALSE === (bool) preg_match('/'.$job['regex'].'/', $now))
                     continue;
 
-                switch ($job['cmd']{0})
+                switch ($job['cmd'][0])
                 {
                     case '/':
                         IS_MST()->Msg($job['cmd'])->Send();
@@ -80,7 +80,7 @@ class cron
 
         foreach (preg_split('/\r?\n/', $file_contents, -1, PREG_SPLIT_NO_EMPTY) as $line)
         {
-            if ($line{0} === '#')
+            if ($line[0] === '#')
                 continue;
 
             list($seconds, $minutes, $hours, $mday, $month, $day, $command) = preg_split('/\s+/', $line, 7, PREG_SPLIT_NO_EMPTY);
@@ -105,7 +105,7 @@ class cron
         $value = (preg_match('/\*\/(\d+)/', $value, $match)) ? range(0, $rangemax, $match[1]) : preg_split('/\s*,\s*/', $value, -1, PREG_SPLIT_NO_EMPTY);
         $value = $this->zeroPadArray($value, $digits);
 
-        return '('.join($value, '|').')';
+        return '('.implode('|', $value).')';
     }
 
     protected function zeroPadArray($array, $size)

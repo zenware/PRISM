@@ -175,7 +175,7 @@ class file {
     );
 
     public static function extensionLookup($extension, $fallback = 'application/octet-stream') {
-        return (isset(SELF::EXTENSIONS[$extension])) ? SELF::EXTENSIONS[$extension] : $fallback;
+        return array_key_exists($extension, SELF::EXTENSIONS) ? SELF::EXTENSIONS[$extension] : $fallback;
     }
 
     public static function getKnownExtensions() {

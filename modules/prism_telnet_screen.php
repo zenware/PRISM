@@ -905,7 +905,7 @@ abstract class TSSection extends ScreenContainer
 
     public function setActive($active)
     {
-        $this->active = (boolean) $active;
+        $this->active = (bool) $active;
         if ($this->getCurObject() === null)
             return;
 

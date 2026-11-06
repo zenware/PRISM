@@ -2,7 +2,9 @@
 
 **PHPInSimMod (PRISM)** is alpha software, and should not be used by anyone who is not brave, or does not know what effect this software may have on their system.
 
-You must download and install PHP 5.3.0 or better, if not already done so.
+The 0.7.x bridge line supports PHP 5.6 through 8.5. PHP 5.6 and 7.1 are
+end-of-life and should only be used as migration bridges. The 1.0 line is
+targeted at PHP 8.5 and may make breaking changes.
 You can download PHP from here, http://www.php.net/downloads.php
 
 You should change the Default Timezone cvar within the config/cvar.ini file,
