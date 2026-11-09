@@ -2,9 +2,11 @@
 
 **PHPInSimMod (PRISM)** is alpha software, and should not be used by anyone who is not brave, or does not know what effect this software may have on their system.
 
-The 0.7.x bridge line supports PHP 5.6 through 8.5. PHP 5.6 and 7.1 are
-end-of-life and should only be used as migration bridges. The 1.0 line is
-targeted at PHP 8.5 and may make breaking changes.
+PRISM 0.6.x targets PHP 5.6. PRISM 0.7.x is the PHP 7.1 bridge and keeps
+PHP 5.6 compatibility. The packet/plugin/page test suite is also exercised on
+PHP 8.5 to prepare the 1.0 line. PRISM 1.0 will require PHP 8.5 and will be the
+first intentional breaking release. PHP 5.6 and 7.1 are end-of-life; use them
+only as migration bridges.
 You can download PHP from here, http://www.php.net/downloads.php
 
 You should change the Default Timezone cvar within the config/cvar.ini file,
@@ -15,6 +17,7 @@ http://www.lfsforum.net/forumdisplay.php?f=312
 
 ## Documentation
 ### PRISM
+* [Migrating PRISM and PHP](docs/migration.md)
 * [Admin API](docs/admin_api.md)
 * [Commands](docs/commands.md)
 * [Creating pages](docs/creating_pages.md)

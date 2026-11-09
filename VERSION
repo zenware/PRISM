@@ -1,7 +1,9 @@
 0.7.0
 	* PHP 7.1 bridge release. Keeps the 0.6.x packet, plugin and page APIs
-		while adding compatibility with PHP 5.6 through 8.5.
+		and keeps PHP 5.6 compatibility. PHP 8.5 coverage is for the planned
+		1.0 line, not a production 0.7 daemon target.
 	+ Added a dependency-free test harness with byte-for-byte packet fixtures.
+	+ Added docs/migration.md with the exact PHP 5.6 -> 7.1 -> 8.5 break list.
 	+ Added cross-version checks for PHP 5.6, 7.1 and 8.5.
 	+ Fixed packet packing with protected spare fields, repeated fields,
 		null fields and array reconstruction after unpack().
